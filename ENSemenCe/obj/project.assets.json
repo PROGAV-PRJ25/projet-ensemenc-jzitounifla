@@ -8,19 +8,19 @@
     "net8.0": []
   },
   "packageFolders": {
-    "/Users/quentinlopez/.nuget/packages/": {}
+    "/Users/juliazitouni--flambard/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/ENSemenCe/ENSemanCe.csproj",
+      "projectUniqueName": "/Users/juliazitouni--flambard/Library/Mobile Documents/com~apple~CloudDocs/Studizzz/ensc/IC1.S6/ENSemenCe/projet-ensemenc-jzitounifla/ENSemenCe/ENSemanCe.csproj",
       "projectName": "ENSemanCe",
-      "projectPath": "/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/ENSemenCe/ENSemanCe.csproj",
-      "packagesPath": "/Users/quentinlopez/.nuget/packages/",
-      "outputPath": "/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/ENSemenCe/obj/",
+      "projectPath": "/Users/juliazitouni--flambard/Library/Mobile Documents/com~apple~CloudDocs/Studizzz/ensc/IC1.S6/ENSemenCe/projet-ensemenc-jzitounifla/ENSemenCe/ENSemanCe.csproj",
+      "packagesPath": "/Users/juliazitouni--flambard/.nuget/packages/",
+      "outputPath": "/Users/juliazitouni--flambard/Library/Mobile Documents/com~apple~CloudDocs/Studizzz/ensc/IC1.S6/ENSemenCe/projet-ensemenc-jzitounifla/ENSemenCe/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/quentinlopez/.nuget/NuGet/NuGet.Config"
+        "/Users/juliazitouni--flambard/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
