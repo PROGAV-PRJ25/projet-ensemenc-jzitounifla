@@ -66,14 +66,14 @@ public class Monde
             if (yConsole == YGrilleStart)
                 TracerCadre("┌", "┐", MargeGauche);
             //base du cadre
-            else if (yConsole == ((YInterCase + YTailleCase) * (YTailleGrilleCaractere + 1)))
+            else if (yConsole == ((YInterCase + YTailleCase) * (YTailleGrilleCaractere) + YGrilleStart))
                 TracerCadre("└", "┘", MargeGauche);
             //grille
             else if (YGrilleStart >= yConsole && yConsole <= YTailleGrilleCaractere)
             {
                 Console.Write("|");
                 //interCase
-                if (yConsole % (YTailleCase + 1) == 0)
+                if ((yConsole - YGrilleStart) % (YTailleCase + 1) == 0)
                 {
                     TracerNPattern(" ", MargeGauche);
                 }
@@ -83,7 +83,7 @@ public class Monde
                     ChangerCouleurEtat();
                     for (int xGrille = 0; xGrille < XTailleGrille; xGrille++)
                     {
-                        Console.Write(Parcelles[xGrille, yCase]);
+                        Console.Write(Parcelle[xGrille, yCase].Design);
                         Console.Write(" ");
                     }
                     Console.ForegroundColor = ConsoleColor.White;
