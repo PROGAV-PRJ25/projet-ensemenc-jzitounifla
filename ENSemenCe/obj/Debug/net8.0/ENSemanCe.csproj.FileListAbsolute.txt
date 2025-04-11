@@ -1,0 +1,15 @@
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/bin/Debug/net8.0/ENSemanCe
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/bin/Debug/net8.0/ENSemanCe.deps.json
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/bin/Debug/net8.0/ENSemanCe.runtimeconfig.json
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/bin/Debug/net8.0/ENSemanCe.dll
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/bin/Debug/net8.0/ENSemanCe.pdb
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/obj/Debug/net8.0/ENSemanCe.GeneratedMSBuildEditorConfig.editorconfig
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/obj/Debug/net8.0/ENSemanCe.AssemblyInfoInputs.cache
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/obj/Debug/net8.0/ENSemanCe.AssemblyInfo.cs
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/obj/Debug/net8.0/ENSemanCe.csproj.CoreCompileInputs.cache
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/obj/Debug/net8.0/ENSemanCe.sourcelink.json
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/obj/Debug/net8.0/ENSemanCe.dll
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/obj/Debug/net8.0/refint/ENSemanCe.dll
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/obj/Debug/net8.0/ENSemanCe.pdb
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/obj/Debug/net8.0/ENSemanCe.genruntimeconfig.cache
+/Users/quentinlopez/Documents/ENSC/S6/InfoS6/ProgC#/projet-ensemenc-jzitounifla/ENSemenCe/obj/Debug/net8.0/ref/ENSemanCe.dll

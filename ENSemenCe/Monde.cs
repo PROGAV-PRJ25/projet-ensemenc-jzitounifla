@@ -18,9 +18,9 @@ public class Monde
     public void TracerCadre(string bordGauche, string bordDroit, int MargeGauche)
     {
         ConsoleColor Cadre = ConsoleColor.White;
-        Console.Write("┌");
+        Console.Write(bordGauche);
         TracerNPattern("-", MargeGauche, Cadre);
-        Console.Write("┐");
+        Console.Write(bordDroit);
     }
     public void ChangerCouleurEtat()
     {
@@ -37,27 +37,29 @@ public class Monde
 
         int ParcelleSlectionnee = 0;
         //console
-        int YConsole = 50;
-        int YGrilleStart = 0;
+        int YConsole = 20;
+        int YGrilleStart = 2;
         int MargeGauche = 10;
 
         //taille case
-        int YTailleCase = 8;
-        int XTailleCase = 4;
+        int YTailleCase = 1;
+        int XTailleCase = 2 * YTailleCase;
 
         //intercase
         int YInterCase = 1;
         int XInterCase = 1;
 
         //taille grille
-        int YTailleGrille = 10;
-        int XTailleGrille = 20;
+        int YTailleGrille = 2;
+        int XTailleGrille = 2;
         //coordonnees absolue
-        int YTailleGrilleCaractere = YInterCase + YTailleCase * YTailleGrille - 1;
+        int YTailleGrilleCaractere = (YInterCase + YTailleCase) * YTailleGrille + 1;
         int XTailleGrilleCaractere = XInterCase + XTailleCase * XTailleGrille - 1;
 
         //parcours
         int yCase = 0;
+        int yGrille = 0;
+        Console.Clear();
         for (int yConsole = 0; yConsole < YConsole; yConsole++)
         {
             //espace sur le cote
@@ -66,34 +68,39 @@ public class Monde
             if (yConsole == YGrilleStart)
                 TracerCadre("┌", "┐", MargeGauche);
             //base du cadre
-            else if (yConsole == ((YInterCase + YTailleCase) * (YTailleGrilleCaractere) + YGrilleStart))
+            else if (yConsole == YGrilleStart - 1 + YTailleGrilleCaractere)
                 TracerCadre("└", "┘", MargeGauche);
             //grille
-            else if (YGrilleStart >= yConsole && yConsole <= YTailleGrilleCaractere)
+            else if (YGrilleStart < yConsole && yConsole < YGrilleStart - 1 + YTailleGrilleCaractere)
             {
                 Console.Write("|");
                 //interCase
-                if ((yConsole - YGrilleStart) % (YTailleCase + 1) == 0)
+                if ((yConsole - YGrilleStart) % (YTailleCase + YInterCase) == 0)
                 {
                     TracerNPattern(" ", MargeGauche);
+                    yGrille++;
                 }
                 //case
                 else
                 {
+                    yCase = (yCase + 1) % YTailleCase;
                     ChangerCouleurEtat();
                     for (int xGrille = 0; xGrille < XTailleGrille; xGrille++)
                     {
-                        Console.Write(Parcelle[xGrille, yCase].Design);
+                        if (Parcelle[ParcelleSlectionnee][xGrille, yGrille] == null)
+                            TracerNPattern(" ", XTailleCase);
+                        else
+                            Console.Write(Parcelle[ParcelleSlectionnee][xGrille, yGrille].Design[yCase]);
                         Console.Write(" ");
                     }
                     Console.ForegroundColor = ConsoleColor.White;
                 }
                 Console.Write("|");
             }
+            Console.WriteLine("");
+            //menu1 sur le cote
+            //menu2 sur le cote
         }
-        //menu1 sur le cote
-        //menu2 sur le cote
-        Console.WriteLine("");
     }
 }
 
