@@ -86,6 +86,14 @@ public class Monde
     }
     public void Affichage()
     {
+        Dictionary<int, string> menu = new Dictionary<int, string>{
+            //Pieces 11+1*3+2, dephasage : + si grand, negatif si petit
+            { 4, "Level" },
+            { 6, "LevelNom" },
+
+            { 8, "Score" },
+            { 10, "retour" },
+    };
         //parcelle 
         List<Plante[,]> Parcelle = new List<Plante[,]>
 {
@@ -102,6 +110,7 @@ new Plante[,] { { null, null, null, null, null, null }, { null, null, null, null
         int YConsole = 30;
         int YGrilleStart = 3;
         int MargeGauche = 10;
+        int MargeAvantMenu = 10;
 
         //taille case
         int YTailleCase = 2;
@@ -122,14 +131,16 @@ new Plante[,] { { null, null, null, null, null, null }, { null, null, null, null
         int yCase = 0;
         int yGrille = 0;
         int ligneArroseur = 0;
-
+        bool estGrille = true;
         //autre
         int frequenceArroseurX = 2;
         int frequenceArroseurY = 2;
         Console.Clear();
+        string menuSelectionne = "retour";
         TracerTitreEncadre("ENSemenCe", ConsoleColor.Green);
         for (int yConsole = 0; yConsole < YConsole; yConsole++)
         {
+            estGrille = true;
             //espace sur le cote
             TracerPatternLongueurN(" ", MargeGauche);
             //haut du cadre
@@ -173,8 +184,24 @@ new Plante[,] { { null, null, null, null, null, null }, { null, null, null, null
                 TracerCloture("vertical", ConsoleColor.White, yGrilleStart: YGrilleStart, yConsole: yConsole);
                 yCase = (yCase + 1) % (YTailleCase + YInterCase);
             }
+            else
+                estGrille = false;
+            if (menu.ContainsKey(yConsole))
+            {
+                if (!estGrille)
+                    TracerPatternLongueurN(" ", XTailleGrilleCaractere);
+                TracerPatternLongueurN(" ", MargeAvantMenu);
+                if (menu[yConsole] == menuSelectionne)
+                {
+                    Console.BackgroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("> " + menu[yConsole]);
+                    Console.ResetColor();
+                }
+                else
+                    Console.Write("> " + menu[yConsole]);
+            }
             Console.WriteLine("");
-            //menu1 sur le cote
         }
     }
 }
