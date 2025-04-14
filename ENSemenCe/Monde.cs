@@ -7,42 +7,104 @@ public class Monde
     {
 
     }
-    public void TracerNPattern(string pattern, int n, ConsoleColor couleur = ConsoleColor.White)
+    public static void TracerPatternLongueurN(string pattern, int n, ConsoleColor couleur = ConsoleColor.White)
     {
         Console.ForegroundColor = couleur;
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n / pattern.Length; i++)
         {
             Console.Write(pattern);
         }
+        Console.Write(pattern.Substring(0, n % pattern.Length));
     }
-    public void TracerCadre(string bordGauche, string bordDroit, int MargeGauche)
+    public void TracerCadre(string bordGauche, string bordDroit, int longueur)
     {
         ConsoleColor Cadre = ConsoleColor.White;
         Console.Write(bordGauche);
-        TracerNPattern("-", MargeGauche, Cadre);
+        TracerCloture("horizontal", Cadre, longueur);
         Console.Write(bordDroit);
+    }
+    public void TracerCloture(string direction, ConsoleColor couleur, int longueur = 0, int yGrilleStart = 0, int yConsole = 0)
+    {
+        Console.ForegroundColor = couleur;
+        string clotureHorizontal = "-┼";
+        string clotureVertical = "|┼";
+        if (direction == "horizontal")
+        {
+            TracerPatternLongueurN(clotureHorizontal, longueur, couleur);
+        }
+        else
+        {
+            Console.Write(clotureVertical[(yConsole - yGrilleStart) % clotureVertical.Length]);
+        }
+    }
+    public void TracerInterligneAroseur(string arroseur, int longueurInterval, int frequenceArroseur, int longueurTotal)
+    {
+        ConsoleColor Cadre = ConsoleColor.White;
+        int nombreArroseur = longueurTotal / (longueurInterval * frequenceArroseur);
+        if (nombreArroseur != 0)
+        {
+            for (int i = 0; i < nombreArroseur; i++)
+            {
+                for (int j = 0; j < frequenceArroseur - 1; j++)
+                {
+                    TracerPatternLongueurN(" ", longueurInterval);
+                }
+                TracerPatternLongueurN(" ", longueurInterval - 1);
+                Console.Write(arroseur);
+            }
+        }
+        TracerPatternLongueurN(" ", longueurTotal % (longueurInterval * frequenceArroseur));
     }
     public void ChangerCouleurEtat()
     {
         Console.ForegroundColor = ConsoleColor.Red;
     }
-    public void Simuler()
+    public static void SauterNLigne(int n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            Console.Write("\n");
+        }
+    }
+    public static void TracerTitreEncadre(string texte, ConsoleColor couleur)
+    {
+        Console.ForegroundColor = ConsoleColor.Blue;
+        SauterNLigne(2);
+        TracerPatternLongueurN("-", 100, couleur);
+        SauterNLigne(2);
+        //Titre
+        TracerPatternLongueurN(" ", 30, couleur);
+        for (int i = 0; i < texte.Length; i++)
+        {
+            TracerPatternLongueurN(" ", 3, couleur);
+            Console.Write(texte[i]);
+        }
+        //2 eme ligne
+        SauterNLigne(2);
+        TracerPatternLongueurN("-", 100, couleur);
+        SauterNLigne(2);
+    }
+    public void Affichage()
     {
         //parcelle 
         List<Plante[,]> Parcelle = new List<Plante[,]>
 {
-    new Plante[,] { { null, null },{ null, null } },
-    new Plante[,] { { null, null }, { null, null } }
+    new Plante[,] { { null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null },{ null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null } },
+new Plante[,] { { null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null },{ null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null } },
+new Plante[,] { { null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null },{ null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null } },
+new Plante[,] { { null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null },{ null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null } },
+new Plante[,] { { null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null },{ null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null } },
+new Plante[,] { { null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null },{ null, null, null, null, null, null }, { null, null, null, null, null, null }, { null, null, null, null, null, null } },
 };
 
         int ParcelleSlectionnee = 0;
         //console
-        int YConsole = 20;
-        int YGrilleStart = 2;
+        int YConsole = 30;
+        int YGrilleStart = 3;
         int MargeGauche = 10;
 
         //taille case
-        int YTailleCase = 1;
+        int YTailleCase = 2;
         int XTailleCase = 2 * YTailleCase;
 
         //intercase
@@ -50,56 +112,69 @@ public class Monde
         int XInterCase = 1;
 
         //taille grille
-        int YTailleGrille = 2;
-        int XTailleGrille = 2;
+        int YTailleGrille = 6;
+        int XTailleGrille = 6;
         //coordonnees absolue
         int YTailleGrilleCaractere = (YInterCase + YTailleCase) * YTailleGrille + 1;
-        int XTailleGrilleCaractere = XInterCase + XTailleCase * XTailleGrille - 1;
+        int XTailleGrilleCaractere = (XInterCase + XTailleCase) * XTailleGrille + 1;
 
         //parcours
         int yCase = 0;
         int yGrille = 0;
+        int ligneArroseur = 0;
+
+        //autre
+        int frequenceArroseurX = 2;
+        int frequenceArroseurY = 2;
         Console.Clear();
+        TracerTitreEncadre("ENSemenCe", ConsoleColor.Green);
         for (int yConsole = 0; yConsole < YConsole; yConsole++)
         {
             //espace sur le cote
-            TracerNPattern(" ", MargeGauche);
+            TracerPatternLongueurN(" ", MargeGauche);
             //haut du cadre
             if (yConsole == YGrilleStart)
-                TracerCadre("┌", "┐", MargeGauche);
+                TracerCadre("┌", "┐", XTailleGrilleCaractere - 2);
             //base du cadre
             else if (yConsole == YGrilleStart - 1 + YTailleGrilleCaractere)
-                TracerCadre("└", "┘", MargeGauche);
+                TracerCadre("└", "┘", XTailleGrilleCaractere - 2);
             //grille
             else if (YGrilleStart < yConsole && yConsole < YGrilleStart - 1 + YTailleGrilleCaractere)
             {
-                Console.Write("|");
+                TracerCloture("vertical", ConsoleColor.White, yGrilleStart: YGrilleStart, yConsole: yConsole);
                 //interCase
                 if ((yConsole - YGrilleStart) % (YTailleCase + YInterCase) == 0)
                 {
-                    TracerNPattern(" ", MargeGauche);
+                    ligneArroseur++;
+                    if (ligneArroseur % frequenceArroseurY == 0)
+                    {
+                        TracerInterligneAroseur(arroseur: ".", longueurInterval: XTailleCase + 1, frequenceArroseur: frequenceArroseurX, longueurTotal: XTailleGrilleCaractere - 2);
+                    }
+                    else
+                        TracerPatternLongueurN(" ", XTailleGrilleCaractere - 2);
                     yGrille++;
                 }
                 //case
                 else
                 {
-                    yCase = (yCase + 1) % YTailleCase;
                     ChangerCouleurEtat();
                     for (int xGrille = 0; xGrille < XTailleGrille; xGrille++)
                     {
                         if (Parcelle[ParcelleSlectionnee][xGrille, yGrille] == null)
-                            TracerNPattern(" ", XTailleCase);
+                            TracerPatternLongueurN(" ", XTailleCase);
                         else
                             Console.Write(Parcelle[ParcelleSlectionnee][xGrille, yGrille].Design[yCase]);
-                        Console.Write(" ");
+                        //ne faire un espace après la derniere case
+                        if (xGrille != XTailleGrille - 1)
+                            Console.Write(" ");
                     }
                     Console.ForegroundColor = ConsoleColor.White;
                 }
-                Console.Write("|");
+                TracerCloture("vertical", ConsoleColor.White, yGrilleStart: YGrilleStart, yConsole: yConsole);
+                yCase = (yCase + 1) % (YTailleCase + YInterCase);
             }
             Console.WriteLine("");
             //menu1 sur le cote
-            //menu2 sur le cote
         }
     }
 }
