@@ -1,9 +1,14 @@
 public class Parcelle
 {
+    //Identification de la parcelle 
+    public string NomParcelle { get; set; }
+    public string TypeParcelle { get; set; }
+
     //Numero et plantes
-    public Plante[,] MatricePlantes { get; set; }
+
     public int IndexParcelle { get; set; }
-    public static int NbParcelle { get; set; } = 0;
+    public static int NbParcelle { get; set; } = 0; //nombre total de parcelles du joueur > static et augmente à chaque nouvelle parcelle
+    public Plante[,] MatricePlantes { get; set; }
 
     //propriete de la parcelle
 
@@ -13,7 +18,16 @@ public class Parcelle
     public int NiveauPanneau { get; set; }
     public int NiveauPalissade { get; set; }
     public int NbRobot { get; set; }
-    public Parcelle(int dimX, int dimY)
+
+    //Différentes variables qui changent en fonction de la météo et du mois
+    public int ElectrisationVar { get; set; }
+    public int EnsoleillementVar { get; set; }
+    public int HuileSolVar { get; set; }
+    public int TemperatureVar { get; set; }
+    public int RadioactiviteVar { get; set; }
+
+    //CONSTRUCTEUR : 
+    public Parcelle(int dimX, int dimY, string type)
     {   //
         MatricePlantes = new Plante[dimX, dimY];
         //non ameliore au debut
@@ -23,7 +37,16 @@ public class Parcelle
         NiveauPalissade = 1;
         NbRobot = 0;
 
+        TypeParcelle = type;
         IndexParcelle = NbParcelle;
+
+        Console.WriteLine("Comment voulez-vous appeler votre parcelle ? Pressez seulement Entrée pour mettre le nom par défaut.");
+        NomParcelle = Console.ReadLine()!;
+        if (NomParcelle == "")
+        {
+            NomParcelle = "Parcelle n°" + IndexParcelle + 1 + "- " + TypeParcelle; //Nom par défaut = "Parcelle n°1 - Potager"
+        }
+        else NomParcelle = "Parcelle n°" + IndexParcelle + 1 + "- " + NomParcelle; //Nom choisi = "Parcelle n°1 - NomChoisi"
         NbParcelle++;
     }
     public void ArroserParcelle()
@@ -35,10 +58,10 @@ public class Parcelle
             for (int j = 0; j < colonnes; j++)
             {
                 Plante plante = MatricePlantes[i, j];
-                if (plante != null)
+                if (plante != null) //on vérifie s'il y a une plante à cet endroit là 
                 {
                     int a = 1;
-                    //Plante.Arroser(NiveauArroseur);
+                    //on pourrra remplacer le int a par : Plante.Arroser(NiveauArroseur);
                 }
             }
         }
