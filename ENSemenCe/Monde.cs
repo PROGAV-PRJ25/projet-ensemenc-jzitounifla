@@ -4,6 +4,9 @@ public class Monde
 {
     public string[] Mois { get; set; }
 
+    //composants 
+    public Dictionary<string, int> Composants { get; set; }
+
     //selection
     public int ParcelleSlectionnee { get; set; }
     public string MenuSelectionnee { get; set; }
@@ -22,7 +25,17 @@ public class Monde
         XTailleGrille = dimX;
         YTailleGrille = dimY;
         ListParcelle = [new Parcelle(XTailleGrille, YTailleGrille)];
+
+        Composants = new Dictionary<string, int>
+        {
+            { "Boulons", 0 },
+            { "Plaques de fer", 0 },
+            { "Tiges de fer", 0 },
+            { "Vis", 0 },
+            { "Noyau à moteur", 0 }
+        };
     }
+    //affichage
     public void ChangerCouleurEtat(int Etat)
     {
         if (Etat == 1)
@@ -116,6 +129,71 @@ public class Monde
             }
             Console.WriteLine("");
         }
+    }
+
+    //action 
+    public void GererEntreeClavier()
+    {
+        ConsoleKeyInfo touche = Console.ReadKey(true);
+        switch (touche.Key)
+        {
+            case ConsoleKey.UpArrow:
+                Console.WriteLine("Flèche du haut : a = ");
+                break;
+
+            case ConsoleKey.DownArrow:
+                Console.WriteLine("Flèche du bas : a = ");
+                break;
+
+            case ConsoleKey.Spacebar:
+                Console.WriteLine("Espace : a = ");
+                break;
+
+            default:
+                Console.WriteLine("Touche invalide. Réessaye...");
+                GererEntreeClavier(); // Appel récursif
+                return; // Important pour ne pas continuer après l'appel récursif
+        }
+        // Tu peux faire d'autres trucs ici avec la variable `a`
+    }
+
+    //action sur plante
+    public void ArroserTout()
+    {
+        foreach (Parcelle parcelle in ListParcelle)
+        {
+            parcelle.ArroserParcelle();
+        }
+    }
+    public void ArroserParcelleSelectionnee()
+    {
+        //selectionnerParcelle
+        int index = 0;
+        ListParcelle[index].ArroserParcelle();
+    }
+    public void ArroserPlante()
+    {
+        int x = 0;
+        int y = 0;
+        //ListParcelle[ParcelleSlectionnee].MatricePlantes[x, y].Arroser();
+    }
+    public void Planter()
+    {
+    }
+    public void DemonterPlante()
+    {
+        //selectionnerPlantes
+        //retirer
+        //ajouter aux dico composants
+    }
+    public void EclairerPlante()
+    {
+
+    }
+
+    public void Recolter()
+    {
+
     }
 }
 

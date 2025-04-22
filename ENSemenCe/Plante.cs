@@ -13,9 +13,6 @@ public abstract class Plante
 
   }
 
-
-
-
   //pour les différents types de plantes, faire diff matrices qui changent les propriétés de chaque 
   //string pour le nom de la plante, puis tableau pour nécessaire construction
   //tableau : [nb boulons, nb plaques fer, nb tiges fer, nb vis, noyau vapeur]

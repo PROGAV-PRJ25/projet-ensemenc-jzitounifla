@@ -26,5 +26,21 @@ public class Parcelle
         IndexParcelle = NbParcelle;
         NbParcelle++;
     }
-
+    public void ArroserParcelle()
+    {
+        int lignes = MatricePlantes.GetLength(0);
+        int colonnes = MatricePlantes.GetLength(1);
+        for (int i = 0; i < lignes; i++)
+        {
+            for (int j = 0; j < colonnes; j++)
+            {
+                Plante plante = MatricePlantes[i, j];
+                if (plante != null)
+                {
+                    int a = 1;
+                    //Plante.Arroser(NiveauArroseur);
+                }
+            }
+        }
+    }
 }
