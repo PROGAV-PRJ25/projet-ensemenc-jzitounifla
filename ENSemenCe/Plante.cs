@@ -3,11 +3,13 @@ using System.ComponentModel;
 public abstract class Plante
 {
   public new string[] Design { get; set; }
-  public new string[] Etat { get; set; }
+  public new string[] Etat { get; set; } //à voir, ce sera sans doute une méthode 
   public new string Type { get; set; } //-> une rose, une marguerite ou jsp
-  public new int[] NecessaireConstruction { get; set; }
+
+  public new Parcelle Parcelle { get; set; } //parcelle où elle est plantée
+  public new int[] NecessaireConstruction { get; set; } //à voir, parce que déjà utilisé à ce stade. 
   public new int[] ResultatDemontage { get; set; }
-  public new int NombreFruits { get; set; }
+  public new int NombreFruits { get; set; } //slmt si arbre fruitier
   public Plante()
   {
 
@@ -26,9 +28,17 @@ public abstract class Plante
       ["Poir1er"] = [25, 2, 1, 4, 1],
       ["LierR3"] = [10, 0, 3, 1, 1],
     };
+  }
 
+
+  public int Etat()
+  {
 
   }
+
+
+
+
 }
 
 
