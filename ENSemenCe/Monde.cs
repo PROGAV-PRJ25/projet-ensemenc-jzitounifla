@@ -32,7 +32,7 @@ public class Monde
             { "Plaques de fer", 0 },
             { "Tiges de fer", 0 },
             { "Vis", 0 },
-            { "Noyau à moteur", 0 }
+            { "Noyaux à moteur", 0 }
         };
     }
     //affichage
@@ -64,6 +64,8 @@ public class Monde
 
         Console.Clear();
         Graphique.TracerTitreEncadre(Graphique.Titre, XTailleGrilleCaractere);
+        Graphique.SauterNLigne(3);
+        Graphique.AfficherDictionnaire(Composants, Graphique.Palette["Composants"]);
         for (int yConsole = 0; yConsole < Graphique.YConsole; yConsole++)
         {
             estGrille = true;
