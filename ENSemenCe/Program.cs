@@ -1,4 +1,4 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 Monde m1 = new Monde(10, 6);
-m1.Affichage();
+m1.GererEntreeClavier();

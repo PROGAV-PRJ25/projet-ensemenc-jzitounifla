@@ -134,29 +134,54 @@ public class Monde
     //action 
     public void GererEntreeClavier()
     {
+        Affichage();
+        Console.WriteLine("Fleche du haut et du bas pour naviguer espace pour valider");
         ConsoleKeyInfo touche = Console.ReadKey(true);
         switch (touche.Key)
         {
+            //Up et Down se déplacer
             case ConsoleKey.UpArrow:
-                Console.WriteLine("Flèche du haut : a = ");
+                PrendreSectionSuivantePrecedente(false);
                 break;
 
             case ConsoleKey.DownArrow:
-                Console.WriteLine("Flèche du bas : a = ");
+                PrendreSectionSuivantePrecedente(true);
                 break;
 
+            //valider
             case ConsoleKey.Spacebar:
-                Console.WriteLine("Espace : a = ");
                 break;
-
             default:
-                Console.WriteLine("Touche invalide. Réessaye...");
-                GererEntreeClavier(); // Appel récursif
+                {
+                    GererEntreeClavier();
+                } // Appel récursif
                 return; // Important pour ne pas continuer après l'appel récursif
         }
         // Tu peux faire d'autres trucs ici avec la variable `a`
     }
 
+    public void PrendreSectionSuivantePrecedente(bool suivante)
+    {
+        var valeurs = Constantes.Menus[MenuSelectionnee].Values.ToList();
+        int index = valeurs.IndexOf(SectionSelectionnee);
+
+        if (index == -1)
+        {
+            throw new ArgumentException($"Clé '{MenuSelectionnee}' non trouvée dans le dictionnaire.");
+        }
+        int indexRenvoye = 0;
+        if (suivante)
+            indexRenvoye = (index + 1) % valeurs.Count;
+        else
+            indexRenvoye = (index - 1 + valeurs.Count) % valeurs.Count;
+        SectionSelectionnee = valeurs[indexRenvoye];
+        GererEntreeClavier();
+    }
+
+    public void Valider()
+    {
+
+    }
     //action sur plante
     public void ArroserTout()
     {
