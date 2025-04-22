@@ -31,9 +31,10 @@ public abstract class Plante
   }
 
 
-  public int Etat()
+  public int CalcEtat()
   {
-
+    int a = NombreFruits;
+    return a;
   }
 
 
