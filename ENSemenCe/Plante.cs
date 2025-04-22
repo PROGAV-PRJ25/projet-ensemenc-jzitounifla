@@ -30,11 +30,12 @@ public abstract class Plante
     };
   }
 
+  /*
+    public int Etat()
+    {
 
-  public int Etat()
-  {
-
-  }
+    }
+    */
 
 
 

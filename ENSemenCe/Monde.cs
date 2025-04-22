@@ -24,7 +24,7 @@ public class Monde
         ParcelleSlectionnee = 0;
         XTailleGrille = dimX;
         YTailleGrille = dimY;
-        ListParcelle = [new Parcelle(XTailleGrille, YTailleGrille)];
+        ListParcelle = [new Parcelle(XTailleGrille, YTailleGrille, "Potager")];
 
         Composants = new Dictionary<string, int>
         {
@@ -135,6 +135,7 @@ public class Monde
     public void GererEntreeClavier()
     {
         Affichage();
+        Console.ForegroundColor = Graphique.Palette["Message"];
         Console.WriteLine("Fleche du haut et du bas pour naviguer espace pour valider");
         ConsoleKeyInfo touche = Console.ReadKey(true);
         switch (touche.Key)
