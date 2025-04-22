@@ -13,6 +13,7 @@ public static class Graphique
             { "TexteMenu",ConsoleColor.White  },
             { "MenuSelectionne",ConsoleColor.White  },
             { "Message",ConsoleColor.Yellow  },
+            { "Composants",ConsoleColor.Green },
     };
 
     //Design Cloture
@@ -180,5 +181,15 @@ public static class Graphique
     {
         Console.ForegroundColor = Palette["Palissade"];
         Console.Write(PalissadeDesign[niveauPalissade]["vertical"][yCase % PalissadeDesign[niveauPalissade]["vertical"].Length]);
+    }
+
+    public static void AfficherDictionnaire(Dictionary<string, int> dic, ConsoleColor couleur)
+    {
+        Console.ForegroundColor = couleur;
+        foreach (var pair in dic)
+        {
+            TracerPatternLongueurN(" ", 3, couleur);
+            Console.Write(pair.Key + " : " + pair.Value);
+        }
     }
 };
