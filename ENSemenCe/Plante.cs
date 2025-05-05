@@ -11,21 +11,23 @@ public abstract class Plante
     ["Poir1er"] = [25, 2, 1, 4, 1],
     ["LierR3"] = [10, 0, 3, 1, 1],
   };
-  public new string[] Design { get; set; }
-  public new string Type { get; set; } //-> une rose, une marguerite ou jsp
-
-  public new Parcelle Parcelle { get; set; } //parcelle où elle est plantée
+  public new string[] Design { get; set; } //Apparence de la plante dans le terminal
+  public string Type { get; set; } //-> une rose, une marguerite ou jsp
+  public Parcelle Parcelle { get; set; } //parcelle où elle est plantée
   public new int[] NecessaireConstruction { get; set; } //à voir, parce que déjà utilisé à ce stade. 
-  public new int[] ResultatDemontage { get; set; }
-  public new int NombreFruits { get; set; } //slmt si arbre fruitier
-  public Plante(Parcelle parcelle)
+  public new int[] ResultatDemontage { get; set; } //Ce qu'on obtient en démontant la plante. 
+
+  public int[] Coord { get; set; } //les coordonnées de la plante, avec [x, y].
+  public int EspacementNecessaire { get; set; } //l'espacement nécessaire au bien-être de la plante 
+  public Plante(Parcelle parcelle, int x, int y)
   {
     Design = ["", ""]; //euh pour l'instant y a rien 
     Type = "Margh-ee-rite"; //marguerite par défaut, mais pas de raison que soit appelé. 
     Parcelle = parcelle;
     NecessaireConstruction = dicoPlantesConstruction[Type];
     ResultatDemontage = NecessaireConstruction; //changer pour le multiplier par 3 par exemple -> for int... 
-    NombreFruits = 0;
+    Coord = [x, y];
+    EspacementNecessaire = 0;
   }
 
   //pour les différents types de plantes, faire diff matrices qui changent les propriétés de chaque 
@@ -36,7 +38,7 @@ public abstract class Plante
 
   public int CalcEtat() //Calculer l'état de la plante 
   {
-    int a = NombreFruits;
+    int a = 1;
     return a;
   }
 
