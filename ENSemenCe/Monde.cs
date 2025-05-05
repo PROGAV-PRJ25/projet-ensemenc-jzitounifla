@@ -17,6 +17,9 @@ public class Monde
     public int YTailleGrille { get; set; }
     public List<Parcelle> ListParcelle { get; set; }
 
+    //selection
+    public int[] CaseSelectionnee = [0, 0];
+    public bool CaseSelectionneePossible = false;
     public Monde(int dimX, int dimY)
     {
         MenuSelectionnee = "MenuGeneral";
@@ -152,7 +155,7 @@ public class Monde
                 break;
 
             //valider
-            case ConsoleKey.Spacebar:
+            case ConsoleKey.Enter:
                 break;
             default:
                 {
@@ -205,8 +208,110 @@ public class Monde
         int y = 0;
         //ListParcelle[ParcelleSlectionnee].MatricePlantes[x, y].Arroser();
     }
-    public void Planter()
+    public bool[,] VerifierPlanter()
     {
+        bool[,] emplacementPasPossible = new bool[XTailleGrille, YTailleGrille];
+
+        if (MenuSelectionnee == "Planter")
+        {
+            foreach (Plante plante in ListParcelle[ParcelleSlectionnee].MatricePlantes)
+            {
+                if (plante != null)
+                {
+                    int x = plante.Coord[0];
+                    int y = plante.Coord[1];
+                    int espacement = plante.EspacementNecessaire; // propriété supposée de la plante
+
+                    // Définir la zone à interdire autour de la plante
+                    for (int dx = -espacement; dx <= espacement; dx++)
+                    {
+                        for (int dy = -espacement; dy <= espacement; dy++)
+                        {
+                            int nx = x + dx;
+                            int ny = y + dy;
+
+                            // Vérifier que la case est dans les limites de la grille
+                            if (nx >= 0 && nx < XTailleGrille && ny >= 0 && ny < YTailleGrille)
+                            {
+                                emplacementPasPossible[nx, ny] = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return emplacementPasPossible;
+    }
+
+    public void SelectionPlante()
+    {
+        CaseSelectionnee = [0, 0];
+        bool annuler = false;
+        bool valider = false;
+        string consigne = "fleche pour se deplacer, entree pour valider, e pour annuler";
+        bool[,] emplacementPasPossible = VerifierPlanter();
+        CaseSelectionneePossible = false;
+        do
+        {
+            Affichage();
+            Console.ForegroundColor = Graphique.Palette["Message"];
+            Console.WriteLine(consigne);
+            ConsoleKeyInfo touche = Console.ReadKey(true);
+            switch (touche.Key)
+            {
+                //Up et Down se déplacer
+                case ConsoleKey.UpArrow:
+                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], 0, -1);
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], 0, 1);
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], 1, 0);
+                    break;
+
+                case ConsoleKey.LeftArrow:
+                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], -1, 0);
+                    break;
+                //valider
+                case ConsoleKey.Enter:
+                    if (MenuSelectionnee == "Planter" && valider)
+                    {
+                        if (!emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]])
+                        {
+                            //planter
+                        }
+                        else
+                        {
+                            //l espacement n est pas bon
+                        }
+                    }
+                    else if (MenuSelectionnee == "Demonter" && valider)
+                    {
+                        //detruire
+                        //actualiser piece plante si il y une plante
+                    }
+                    break;
+                //annuler
+                case ConsoleKey.E:
+                    annuler = true;
+                    break;
+            }
+        } while (!annuler && !valider);
+        CaseSelectionnee = [-1, -1];
+        MenuSelectionnee = "MenuGeneral";
+        SectionSelectionnee = "Retour";
+        Affichage();
+    }
+    public int[] CoordCase(int xActu, int yActu, int xTranslation, int yTranslation)
+    {
+        int[] coord = [xActu, yActu];
+        if ((xActu + xTranslation >= 0) && (yActu + yTranslation >= 0) && (xActu + xTranslation < XTailleGrille) && (yActu + yTranslation < YTailleGrille))
+            coord = [xActu + xTranslation, yActu + yTranslation];
+        return coord;
     }
     public void DemonterPlante()
     {
