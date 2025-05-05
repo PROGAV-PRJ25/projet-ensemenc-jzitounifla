@@ -243,6 +243,23 @@ public class Monde
 
         return emplacementPasPossible;
     }
+    public void ActionPossible(bool emplacementPasPossible)
+    {
+        if (MenuSelectionnee == "Planter")
+        {
+            if (emplacementPasPossible)
+                CaseSelectionneePossible = false;
+            else
+                CaseSelectionneePossible = true;
+        }
+        else if (MenuSelectionnee == "Demonter")
+        {
+            if (ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] != null)
+                CaseSelectionneePossible = true;
+            else
+                CaseSelectionneePossible = false;
+        }
+    }
 
     public void SelectionPlante()
     {
@@ -252,6 +269,7 @@ public class Monde
         string consigne = "fleche pour se deplacer, entree pour valider, e pour annuler";
         bool[,] emplacementPasPossible = VerifierPlanter();
         CaseSelectionneePossible = false;
+        ActionPossible(emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]]);
         do
         {
             Affichage();
@@ -278,18 +296,19 @@ public class Monde
                     break;
                 //valider
                 case ConsoleKey.Enter:
-                    if (MenuSelectionnee == "Planter" && valider)
+                    if (MenuSelectionnee == "Planter" && CaseSelectionneePossible)
                     {
-                        if (!emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]])
+                        if (CaseSelectionneePossible)
                         {
                             //planter
+                            valider = true;
                         }
                         else
                         {
                             //l espacement n est pas bon
                         }
                     }
-                    else if (MenuSelectionnee == "Demonter" && valider)
+                    else if (MenuSelectionnee == "Demonter")
                     {
                         //detruire
                         //actualiser piece plante si il y une plante
@@ -300,6 +319,8 @@ public class Monde
                     annuler = true;
                     break;
             }
+            ActionPossible(emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]]);
+
         } while (!annuler && !valider);
         CaseSelectionnee = [-1, -1];
         MenuSelectionnee = "MenuGeneral";
