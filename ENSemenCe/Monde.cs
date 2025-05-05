@@ -22,8 +22,8 @@ public class Monde
     public bool CaseSelectionneePossible = false;
     public Monde(int dimX, int dimY)
     {
-        MenuSelectionnee = "MenuGeneral";
-        SectionSelectionnee = "Retour";
+        MenuSelectionnee = "Planter";
+        SectionSelectionnee = "Plante1";
         ParcelleSlectionnee = 0;
         XTailleGrille = dimX;
         YTailleGrille = dimY;
@@ -173,7 +173,7 @@ public class Monde
 
         if (index == -1)
         {
-            throw new ArgumentException($"Clé '{MenuSelectionnee}' non trouvée dans le dictionnaire.");
+            throw new ArgumentException($"Clé '{SectionSelectionnee}' non trouvée dans le dictionnaire.");
         }
         int indexRenvoye = 0;
         if (suivante)
@@ -240,7 +240,6 @@ public class Monde
                 }
             }
         }
-
         return emplacementPasPossible;
     }
     public void ActionPossible(bool emplacementPasPossible)
