@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 
 public class Monde
@@ -29,7 +30,7 @@ public class Monde
         XTailleGrille = dimX;
         YTailleGrille = dimY;
         ListParcelle = [new Parcelle(XTailleGrille, YTailleGrille, "Potager")];
-
+        Graphique.YConsole = dimY * Graphique.YTailleCase + Graphique.YGrilleStart + 10;
         Composants = new Dictionary<string, int>
         {
             { "Boulons", 0 },
@@ -209,25 +210,7 @@ public class Monde
 
     }
     //action sur plante
-    public void ArroserTout()
-    {
-        foreach (Parcelle parcelle in ListParcelle)
-        {
-            parcelle.ArroserParcelle();
-        }
-    }
-    public void ArroserParcelleSelectionnee()
-    {
-        //selectionnerParcelle
-        int index = 0;
-        ListParcelle[index].ArroserParcelle();
-    }
-    public void ArroserPlante()
-    {
-        int x = 0;
-        int y = 0;
-        //ListParcelle[ParcelleSlectionnee].MatricePlantes[x, y].Arroser();
-    }
+
     public bool[,] VerifierPlanter()
     {
         bool[,] emplacementPasPossible = new bool[XTailleGrille, YTailleGrille];
@@ -271,7 +254,7 @@ public class Monde
             else
                 CaseSelectionneePossible = true;
         }
-        else if (MenuSelectionnee == "Demonter")
+        else if (MenuSelectionnee == "Demonter" || MenuSelectionnee == "Arroser")
         {
             if (ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] != null)
                 CaseSelectionneePossible = true;
@@ -315,32 +298,22 @@ public class Monde
                     break;
                 //valider
                 case ConsoleKey.Enter:
-                    if (MenuSelectionnee == "Planter" && CaseSelectionneePossible)
+                    if (CaseSelectionneePossible)
                     {
-                        if (CaseSelectionneePossible)
+                        if (MenuSelectionnee == "Planter")
                         {
-                            //ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] = new Plante(ListParcelle[ParcelleSlectionnee].IndexParcelle, CaseSelectionnee[0], CaseSelectionnee[1]);
-                            valider = true;
+                            Planter();
                         }
-                        else
+                        else if (MenuSelectionnee == "Demonter")
                         {
-                            //l espacement n est pas bon
+                            DemonterPlante();
                         }
-                    }
-                    else if (MenuSelectionnee == "Demonter")
-                    {
-                        var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
-                        if (plante != null)
+                        else if (MenuSelectionnee == "Arroser")
                         {
-                            ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] = null;
-                            // Exemple : ajouter des composants récupérés
-                            Composants["Boulons"] += 1; // adapte à ta logique
-                            Composants["Tiges de fer"] += 1;
+                            ArroserPlante();
                         }
                         valider = true;
                     }
-
-
                     break;
                 //annuler
                 case ConsoleKey.E:
@@ -364,10 +337,49 @@ public class Monde
     }
     public void DemonterPlante()
     {
+        var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
+        if (plante != null)
+        {
+            ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] = null;
+            // Exemple : ajouter des composants récupérés
+        }
         //selectionnerPlantes
         //retirer
         //ajouter aux dico composants
     }
+
+    public void Planter()
+    {
+
+        if (CaseSelectionneePossible)
+        {
+            //ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] = new Plante(ListParcelle[ParcelleSlectionnee].IndexParcelle, CaseSelectionnee[0], CaseSelectionnee[1]);
+        }
+    }
+    public void ArroserPlante()
+    {
+        var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
+        if (plante != null)
+        {
+            //ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].Arroser();
+            //actualiser eau
+        }
+    }
+
+    public void ArroserTout()
+    {
+        foreach (Parcelle parcelle in ListParcelle)
+        {
+            parcelle.ArroserParcelle();
+        }
+    }
+    public void ArroserParcelleSelectionnee()
+    {
+        //selectionnerParcelle
+        int index = 0;
+        ListParcelle[index].ArroserParcelle();
+    }
+
     public void EclairerPlante()
     {
 
