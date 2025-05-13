@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 public abstract class Plante
 {
 
-  public new string[] Design { get; set; } //Apparence de la plante dans le terminal
+  public string[] Design { get; set; } //Apparence de la plante dans le terminal
   public string Type { get; set; } //-> une rose, une marguerite ou jsp
   public Parcelle Parcelle { get; set; } //parcelle où elle est plantée
   public int[] Coord { get; set; } //les coordonnées de la plante, avec [x, y].
