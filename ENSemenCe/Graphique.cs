@@ -126,7 +126,7 @@ public static class Graphique
     public const int MargeDroite = 20;
 
     //taille case
-    public const int YTailleCase = 2;
+    public const int YTailleCase = 4;
     public const int XTailleCase = 2 * YTailleCase;
 
     //intercase

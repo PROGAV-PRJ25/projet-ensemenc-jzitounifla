@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 public class Monde
 {
@@ -47,6 +48,14 @@ public class Monde
             Console.ForegroundColor = ConsoleColor.Yellow;
         else
             Console.ForegroundColor = ConsoleColor.Green;
+    }
+    public void Jouer()
+    {
+        int actionParMois = 4;
+        int action = 0;
+        bool passer = false;
+        //mois
+        Affichage();
     }
     public void Affichage()
     {
@@ -99,13 +108,24 @@ public class Monde
                 //case
                 else
                 {
-                    ChangerCouleurEtat(1);
+
                     for (int xGrille = 0; xGrille < XTailleGrille; xGrille++)
                     {
-                        if (ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille] == null)
+                        //curseur
+                        if (CaseSelectionnee[0] == xGrille && CaseSelectionnee[1] == yGrille)
+                        {
+                            ConsoleColor couleur = ConsoleColor.Red;
+                            if (CaseSelectionneePossible)
+                                couleur = ConsoleColor.Green;
+                            Graphique.TracerPatternLongueurN("█", Graphique.XTailleCase, couleur);
+                        }
+                        else if (ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille] == null)
                             Graphique.TracerPatternLongueurN(" ", Graphique.XTailleCase);
                         else
+                        {
+                            ChangerCouleurEtat(1);
                             Console.Write(ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].Design[yCase]);
+                        }
                         //ne faire un espace après la derniere case
                         if (xGrille != XTailleGrille - 1)
                             Graphique.TracerPalissadeVertical(ListParcelle[ParcelleSlectionnee].NiveauPalissade, yCase);
@@ -268,9 +288,9 @@ public class Monde
         string consigne = "fleche pour se deplacer, entree pour valider, e pour annuler";
         bool[,] emplacementPasPossible = VerifierPlanter();
         CaseSelectionneePossible = false;
-        ActionPossible(emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]]);
         do
         {
+            ActionPossible(emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]]);
             Affichage();
             Console.ForegroundColor = Graphique.Palette["Message"];
             Console.WriteLine(consigne);
@@ -299,7 +319,7 @@ public class Monde
                     {
                         if (CaseSelectionneePossible)
                         {
-                            //planter
+                            //ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] = new Plante(ListParcelle[ParcelleSlectionnee].IndexParcelle, CaseSelectionnee[0], CaseSelectionnee[1]);
                             valider = true;
                         }
                         else
@@ -309,9 +329,18 @@ public class Monde
                     }
                     else if (MenuSelectionnee == "Demonter")
                     {
-                        //detruire
-                        //actualiser piece plante si il y une plante
+                        var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
+                        if (plante != null)
+                        {
+                            ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] = null;
+                            // Exemple : ajouter des composants récupérés
+                            Composants["Boulons"] += 1; // adapte à ta logique
+                            Composants["Tiges de fer"] += 1;
+                        }
+                        valider = true;
                     }
+
+
                     break;
                 //annuler
                 case ConsoleKey.E:
