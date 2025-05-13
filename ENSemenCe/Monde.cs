@@ -52,11 +52,15 @@ public class Monde
     }
     public void Jouer()
     {
-        int actionParMois = 4;
-        int action = 0;
         bool passer = false;
-        //mois
-        Affichage();
+        while (true)
+        {
+            //passer
+            while (passer)
+            {
+
+            }
+        }
     }
     public void Affichage()
     {
@@ -109,7 +113,6 @@ public class Monde
                 //case
                 else
                 {
-
                     for (int xGrille = 0; xGrille < XTailleGrille; xGrille++)
                     {
                         //curseur
