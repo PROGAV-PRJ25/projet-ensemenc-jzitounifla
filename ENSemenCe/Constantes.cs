@@ -8,9 +8,12 @@ public static class Constantes
         { 14, "Retour"},
     }},
      { "Planter", new Dictionary<int, string> {
-        { 6, "Planter1" },
-        { 8, "Plante2" },
-        { 14, "Plante3"},
+        { 6, "Margu-ee-rite" },
+        { 8, "Rob-ose" },
+        { 10, "LierR3"},
+        {12, "PoMWier"},
+        {14, "Po1rier"},
+        {20, "Retour"}
     }}};
 
 
