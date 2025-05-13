@@ -119,7 +119,6 @@ public static class Graphique
 
 
     //Console
-    public const int YConsole = 30;
     public const int YGrilleStart = 3;
     public const int MargeGauche = 10;
     public const int MargeAvantMenu = 10;
@@ -128,7 +127,7 @@ public static class Graphique
     //taille case
     public const int YTailleCase = 4;
     public const int XTailleCase = 2 * YTailleCase;
-
+    public static int YConsole = 0;
     //intercase
     public const int YInterCase = 1;
     public const int XInterCase = 1;
