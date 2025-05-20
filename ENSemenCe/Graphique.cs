@@ -15,9 +15,28 @@ public static class Graphique
             { "Message",ConsoleColor.Yellow  },
             { "Composants",ConsoleColor.White},
             { "Mois",ConsoleColor.Blue },
-            { "Information",ConsoleColor.White  },
+            { "Information",ConsoleColor.Green  },
+            { "Robots",ConsoleColor.Cyan },
+            { "Fruit",ConsoleColor.White  },
     };
-
+    //Robots
+    public static readonly Dictionary<int, Dictionary<string, string>> RobotDesign = new Dictionary<int, Dictionary<string, string>> {
+    { 1, new Dictionary<string, string> {
+        { "tete", "◉" },
+        { "corps", "|" },
+        { "pied", "└┘" }
+    }},
+    { 2, new Dictionary<string, string> {
+        { "tete", "⛶" },
+        { "corps", "║" },
+        { "pied", "╚╝" }
+    }},
+    { 3, new Dictionary<string, string> {
+        { "tete", "⌐■-■" },
+        { "corps", "▓" },
+        { "pied", "██" }
+    }}
+    };
     //Design Cloture
     public static readonly Dictionary<int, Dictionary<string, string>> ClotureDesign = new Dictionary<int, Dictionary<string, string>> {
     // Pièces 11+1*3+2, déphasage : + si grand, négatif si petit
@@ -40,13 +59,14 @@ public static class Graphique
     }},
 
     { 3, new Dictionary<string, string> {
-        { "horizontal", "█" },
-        { "vertical", "█" },
-        { "angleHautGauche", "█" },
-        { "angleHautDroit", "█" },
-        { "angleBasGauche", "█" },
-        { "angleBasDroit", "█" }
-    }}
+        { "horizontal", "▓" },
+        { "vertical",   "▒" },
+        { "angleHautGauche", "╞" },
+        { "angleHautDroit",  "╡" },
+        { "angleBasGauche",  "╘" },
+        { "angleBasDroit",   "╛" }
+}}
+
 };
     //Design Arroseur
     public static readonly Dictionary<int, string> ArroseurDesign = new Dictionary<int, string>
@@ -88,10 +108,10 @@ public static class Graphique
     //DESIGN PLANTES :
     public static readonly Dictionary<string, string[]> PlantesDesign = new() {
     {"Margu-ee-rite", ["❋ ❋ ❋ ❋ "," ❋ ❋ ❋ ❋","❋ ❋ ❋ ❋ "," ❋ ❋ ❋ ❋"]},
-    {"Rob-ose", ["❋ ❋ ❋ ❋ "," ❋ ❋ ❋ ❋","❋ ❋ ❋ ❋ "," ❋ ❋ ❋ ❋"]},
-    {"LierR3", ["  ◦⁃⁃◦  "," ◉◦◦◦◦◉ ","  ◦⁃⁃◦  ","   ∐∐   "]},
+    {"Rob-ose", ["   ❀❀❀  ","  ❀ ❀ ❀ ","   ❀❀❀  ","    |   "]},
+    {"LierR3",        ["  /\\/\\/ "," /\\   /\\","    /\\/ ","  \\/\\/\\/"]},
     {"PoMWier", ["  ◦⁃⁃◦  "," ◉◦◦◦◦◉ ","  ◦⁃⁃◦  ","   ∐∐   "]},
-    {"Po1rier",["  ◦⁃⁃◦  "," ◉◦◦◦◦◉ ","  ◦⁃⁃◦  ","   ∐∐   "]}
+    {"Po1rier",["   ⌘⌘   ","  ⌘●●⌘  ","   ⌘⌘   ","   ||   "]},
 };
 
     // _____|❋❋❋ |______
@@ -230,4 +250,19 @@ public static class Graphique
             Console.Write(pair.Key + " : " + pair.Value);
         }
     }
+    public static void AfficherRobot(int niveau)
+    {
+        Console.ForegroundColor = Palette["Robots"];
+        var design = RobotDesign[niveau];
+
+        string tete = design.ContainsKey("tete") ? design["tete"] : " ";
+        string corps = design.ContainsKey("corps") ? design["corps"] : "|";
+        string piedGauche = design.ContainsKey("piedGauche") ? design["piedGauche"] : "/";
+        string piedDroit = design.ContainsKey("piedDroit") ? design["piedDroit"] : "\\";
+
+        Console.WriteLine($"  {tete}  ");
+        Console.WriteLine($"  {corps}  ");
+        Console.WriteLine($" {piedGauche}{piedDroit} ");
+    }
+
 };

@@ -12,7 +12,6 @@ public class Monde
     //selection
     public int ParcelleSlectionnee { get; set; }
     public string MenuSelectionnee { get; set; }
-    public string PrecedentMenuSelectionnee { get; set; }
     public string SectionSelectionnee { get; set; }
     public string TypePlanteSelectionne { get; set; }
 
@@ -28,15 +27,17 @@ public class Monde
     //autre
     public string Message { get; set; }
     public string Information { get; set; }
+    public string ButAmelioration { get; set; }
     public bool Passer { get; set; }
+    public Dictionary<string, int> FruitsProduits { get; set; }
     public Monde(int dimX, int dimY)
     {
         Mois = 0;
         Message = "";
         Information = "";
         MenuSelectionnee = "MenuGeneral";
-        PrecedentMenuSelectionnee = "MenuGeneral";
         SectionSelectionnee = "Planter";
+        ButAmelioration = "Economise de l'huile lors de l'arrosage";
         TypePlanteSelectionne = Constantes.Menus["Planter"].Values.First();
         ParcelleSlectionnee = 0;
         XTailleGrille = dimX;
@@ -50,6 +51,14 @@ public class Monde
             {"plaque", 50},
             {"tige", 50},
             {"vis", 50}
+        };
+        FruitsProduits = new Dictionary<string, int>
+        {
+            { "graines lumineuses", 0 },     // Marguerite
+            { "pétales d'acier", 0 },        // Robose
+            { "gousses grimpantes", 0 },     // Lierre
+            { "pomwies", 0 },                // PoMWier
+            { "poires hybrides", 0 }         // Poirier
         };
     }
     public void InitialisationPlante()
@@ -99,11 +108,6 @@ public class Monde
     }
     public void Affichage()
     {
-        ListParcelle[ParcelleSlectionnee].NiveauCloture = 1;
-        ListParcelle[ParcelleSlectionnee].NiveauArroseur = 1;
-        ListParcelle[ParcelleSlectionnee].NiveauPalissade = 1;//bug au niv 1
-        ListParcelle[ParcelleSlectionnee].NiveauPanneau = 2;
-
         //coordonnees absolue
         int YTailleGrilleCaractere = (Graphique.YInterCase + Graphique.YTailleCase) * YTailleGrille + 1;
         int XTailleGrilleCaractere = (Graphique.XInterCase + Graphique.XTailleCase) * XTailleGrille + 1;
@@ -117,9 +121,18 @@ public class Monde
         Console.Clear();
         Graphique.TracerTitreEncadre(Graphique.Titre, XTailleGrilleCaractere);
         Graphique.SauterNLigne(2);
+
         Console.ForegroundColor = Graphique.Palette["Mois"];
         Console.WriteLine(DonneesClimatiques.TousLesMois[Mois]);
+
+
+        Console.ForegroundColor = Graphique.Palette["Composants"];
         Graphique.AfficherDictionnaire(Composants, Graphique.Palette["Composants"]);
+        Console.WriteLine("");
+        Console.ForegroundColor = Graphique.Palette["Fruit"];
+        Graphique.AfficherDictionnaire(FruitsProduits, Graphique.Palette["Fruit"]);
+
+        Console.WriteLine("\n" + ListParcelle[ParcelleSlectionnee].NomParcelle);
         for (int yConsole = 0; yConsole < Graphique.YConsole; yConsole++)
         {
             estGrille = true;
@@ -195,11 +208,17 @@ public class Monde
             }
             Console.WriteLine("");
         }
+        Graphique.AfficherRobot(ListParcelle[ParcelleSlectionnee].NiveauRobots);
+        AffichageInformation();
+    }
+    public void AffichageInformation()
+    {
         Console.ForegroundColor = Graphique.Palette["Information"];
         if (MenuSelectionnee == "Planter" && SectionSelectionnee != "Retour")
         {
-            Console.Write("Prix");
+            Console.Write("Prix ");
             Graphique.AfficherDictionnaire(Constantes.PlantesNecessaireConstruction[SectionSelectionnee], Graphique.Palette["Information"]);
+            Console.WriteLine(Constantes.PlantesDescription[SectionSelectionnee]);
         }
         else if (SectionSelectionnee == "Demonter" && CaseSelectionneePossible && CaseSelectionnee[0] != -1 && CaseSelectionnee[1] != -1)
         {
@@ -207,11 +226,56 @@ public class Monde
             string TypePlantePotentiellementDetruite = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].TypePlante;
             Graphique.AfficherDictionnaire(CalculerRemboursementConstruction(Constantes.PlantesNecessaireConstruction[TypePlantePotentiellementDetruite]), Graphique.Palette["Information"]);
         }
+        else if (SectionSelectionnee == "Demonter" && CaseSelectionneePossible && CaseSelectionnee[0] != -1 && CaseSelectionnee[1] != -1)
+        {
+            Console.Write("Recuperer");
+            string TypePlantePotentiellementDetruite = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].TypePlante;
+            Graphique.AfficherDictionnaire(CalculerRemboursementConstruction(Constantes.PlantesNecessaireConstruction[TypePlantePotentiellementDetruite]), Graphique.Palette["Information"]);
+        }
+        else if (MenuSelectionnee == "Ameliorer" && SectionSelectionnee != "Retour")
+        {
+            Console.Write("Prix " + ButAmelioration);
+            int niveau = NiveauAmelioration() + 1;
+            if (niveau < 4)
+                Graphique.AfficherDictionnaire(Constantes.AmeliorationNecessaireConstruction[SectionSelectionnee + niveau], Graphique.Palette["Information"]);
+            else
+                Console.Write("Niveau maximul");
+        }
+        else if (MenuSelectionnee == "Acheter" && SectionSelectionnee != "Retour")
+        {
+            int prix = Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee];
+            Console.WriteLine("Prix en boulons pour un pack de " + Constantes.PackAchat);
+            Console.WriteLine(prix);
+            int niveau = NiveauAmelioration() + 1;
+        }
         else
+        {
             Console.ForegroundColor = Graphique.Palette["Message"];
-        Console.WriteLine("\n" + Message);
+            Console.WriteLine("\n" + Message);
+        }
+        Console.WriteLine();
     }
-
+    public int NiveauAmelioration()
+    {
+        int niveau = 1;
+        if (SectionSelectionnee == "Arroseurs")
+        {
+            niveau = ListParcelle[ParcelleSlectionnee].NiveauArroseur;
+        }
+        else if (SectionSelectionnee == "Clotures")
+        {
+            niveau = ListParcelle[ParcelleSlectionnee].NiveauCloture;
+        }
+        else if (SectionSelectionnee == "Palissades")
+        {
+            niveau = ListParcelle[ParcelleSlectionnee].NiveauPalissade;
+        }
+        else if (SectionSelectionnee == "Robots-Travailleurs")
+        {
+            niveau = ListParcelle[ParcelleSlectionnee].NiveauRobots;
+        }
+        return niveau;
+    }
     //action 
     public void GererEntreeClavier()
     {
@@ -261,7 +325,7 @@ public class Monde
     {
         if (SectionSelectionnee == "Retour")
         {
-            MenuSelectionnee = PrecedentMenuSelectionnee;
+            MenuSelectionnee = "MenuGeneral";
             SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
 
         }
@@ -279,21 +343,83 @@ public class Monde
             }
 
         }
+        else if (MenuSelectionnee == "Acheter")
+        {
+            if (Composants["boulons"] >= Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee])
+            {
+                Acheter();
+            }
+        }
         else if (SectionSelectionnee == "Demonter")
         {
             SelectionPlante();
+        }
+        else if (MenuSelectionnee == "Ameliorer")
+        {
+            Ameliorer();
+
         }
         else if (SectionSelectionnee == "Passer")
         {
             Passer = true;
         }
+        else if (SectionSelectionnee == "VendreRecolte")
+        {
+            VendreRecolte();
+        }
 
         else
         {
-            PrecedentMenuSelectionnee = MenuSelectionnee;
             MenuSelectionnee = SectionSelectionnee;
             SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
         }
+    }
+    public void Acheter()
+    {
+        //achat par pack
+        Composants["boulons"] -= Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee];
+        Composants[SectionSelectionnee] += Constantes.PackAchat;
+    }
+    public void VendreRecolte()
+    {
+        {
+            int totalArgent = 0;
+            foreach (var fruit in FruitsProduits.Keys.ToList())
+            {
+                int quantite = FruitsProduits[fruit];
+                int gainUnitaire = Constantes.FruitsGain.ContainsKey(fruit) ? Constantes.FruitsGain[fruit] : 0;
+
+                totalArgent += quantite * gainUnitaire;
+                // Réinitialiser le stock à 0
+                FruitsProduits[fruit] = 0;
+            }
+            Composants["boulons"] += totalArgent;
+        }
+    }
+
+    public void Ameliorer()
+    {
+        if ((SectionSelectionnee == "Arroseurs") && ListParcelle[ParcelleSlectionnee].NiveauArroseur < 3)
+        {
+            ListParcelle[ParcelleSlectionnee].NiveauArroseur += 1;
+            ButAmelioration = "Economise de l'huile lors de l'arrosage";
+        }
+        else if (SectionSelectionnee == "Clotures" && ListParcelle[ParcelleSlectionnee].NiveauArroseur < 3)
+        {
+            ListParcelle[ParcelleSlectionnee].NiveauCloture += 1;
+            ButAmelioration = "Reduit les risques d'imprevus";
+        }
+        else if ((SectionSelectionnee == "Palissades") && ListParcelle[ParcelleSlectionnee].NiveauPalissade < 3)
+        {
+            ListParcelle[ParcelleSlectionnee].NiveauPalissade += 1;
+            ButAmelioration = "Protege vos plantes";
+        }
+        else if ((SectionSelectionnee == "Robots-Travailleurs") && ListParcelle[ParcelleSlectionnee].NiveauArroseur < 3)
+        {
+            ListParcelle[ParcelleSlectionnee].NiveauRobots = 2;
+            ButAmelioration = "Augmente les récolotes";
+        }
+
     }
     public void PrendreSectionSuivantePrecedente(bool suivante)
     {
