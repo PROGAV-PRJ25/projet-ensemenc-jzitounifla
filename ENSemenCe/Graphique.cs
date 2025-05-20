@@ -13,7 +13,9 @@ public static class Graphique
             { "TexteMenu",ConsoleColor.White  },
             { "MenuSelectionne",ConsoleColor.White  },
             { "Message",ConsoleColor.Yellow  },
-            { "Composants",ConsoleColor.Green },
+            { "Composants",ConsoleColor.White},
+            { "Mois",ConsoleColor.Blue },
+            { "Information",ConsoleColor.White  },
     };
 
     //Design Cloture

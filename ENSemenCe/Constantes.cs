@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 public static class Constantes
 {
   public static readonly Dictionary<string, Dictionary<int, string>> Menus = new Dictionary<string, Dictionary<int, string>> {
@@ -5,7 +7,15 @@ public static class Constantes
     { "MenuGeneral", new Dictionary<int, string> {
         { 6, "Planter" },
         { 8, "Arroser" },
-        { 14, "Retour"},
+        { 10, "Demonter" },
+        { 12, "Ameliorer" },
+        { 16, "Retour"},
+        { 20, "Passer"},
+    }},
+       { "Ameliorer", new Dictionary<int, string> {
+        { 6, "Arroseur" },
+        { 8, "Cloture" },
+        { 10, "Robots-Travailleurs" },
     }},
      { "Planter", new Dictionary<int, string> {
         { 6, "Margu-ee-rite" },
@@ -78,4 +88,5 @@ public static class Constantes
         {"vis", 4}
       }}
     };
+  public const double Remboursement = 0.5;
 }

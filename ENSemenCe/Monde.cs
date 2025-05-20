@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 public class Monde
 {
-    public string[] Mois { get; set; }
+    public int Mois { get; set; }
 
     //composants 
     public Dictionary<string, int> Composants { get; set; }
@@ -12,7 +12,9 @@ public class Monde
     //selection
     public int ParcelleSlectionnee { get; set; }
     public string MenuSelectionnee { get; set; }
+    public string PrecedentMenuSelectionnee { get; set; }
     public string SectionSelectionnee { get; set; }
+    public string TypePlanteSelectionne { get; set; }
 
     //grille
     public int XTailleGrille { get; set; }
@@ -20,27 +22,47 @@ public class Monde
     public List<Parcelle> ListParcelle { get; set; }
 
     //selection
-    public int[] CaseSelectionnee = [0, 0];
+    public int[] CaseSelectionnee = [-1, -1];
     public bool CaseSelectionneePossible = false;
+
+    //autre
+    public string Message { get; set; }
+    public string Information { get; set; }
+    public bool Passer { get; set; }
     public Monde(int dimX, int dimY)
     {
-        MenuSelectionnee = "Planter";
-        SectionSelectionnee = "Plante1";
+        Mois = 0;
+        Message = "";
+        Information = "";
+        MenuSelectionnee = "MenuGeneral";
+        PrecedentMenuSelectionnee = "MenuGeneral";
+        SectionSelectionnee = "Planter";
+        TypePlanteSelectionne = Constantes.Menus["Planter"].Values.First();
         ParcelleSlectionnee = 0;
         XTailleGrille = dimX;
         YTailleGrille = dimY;
         ListParcelle = [new Parcelle(XTailleGrille, YTailleGrille, "Potager")];
         Graphique.YConsole = dimY * Graphique.YTailleCase + Graphique.YGrilleStart + 10;
+        InitialisationPlante();
         Composants = new Dictionary<string, int>
         {
-            { "Boulons", 0 },
-            { "Plaques de fer", 0 },
-            { "Tiges de fer", 0 },
-            { "Vis", 0 },
-            { "Noyaux à moteur", 0 }
+            {"boulons", 50},
+            {"plaque", 50},
+            {"tige", 50},
+            {"vis", 50}
         };
     }
-    //affichage
+    public void InitialisationPlante()
+    {
+        CaseSelectionnee[1] = 0;
+        for (int i = 0; i < XTailleGrille; i += 2)
+        {
+            CaseSelectionnee[0] = i;
+            Planter("Margu-ee-rite", true);
+        }
+        CaseSelectionnee[0] = -1;
+        CaseSelectionnee[0] = -1;
+    }
     public void ChangerCouleurEtat(int Etat)
     {
         if (Etat == 1)
@@ -52,15 +74,28 @@ public class Monde
     }
     public void Jouer()
     {
-        bool passer = false;
+        Passer = false;
+        Mois = -1;
         while (true)
         {
-            //passer
-            while (passer)
+            //tirer mode urgence
+            Passer = false;
+            Mois = (Mois + 1) % DonneesClimatiques.TousLesMois.Count();
+            while (!Passer)
             {
-
+                Affichage();
+                GererEntreeClavier();
             }
+            //si mode urgence non =>
+            PasserTour();
         }
+
+    }
+    public void PasserTour()
+    {
+        //composants
+        //faire grandire
+        //huile
     }
     public void Affichage()
     {
@@ -81,7 +116,9 @@ public class Monde
 
         Console.Clear();
         Graphique.TracerTitreEncadre(Graphique.Titre, XTailleGrilleCaractere);
-        Graphique.SauterNLigne(3);
+        Graphique.SauterNLigne(2);
+        Console.ForegroundColor = Graphique.Palette["Mois"];
+        Console.WriteLine(DonneesClimatiques.TousLesMois[Mois]);
         Graphique.AfficherDictionnaire(Composants, Graphique.Palette["Composants"]);
         for (int yConsole = 0; yConsole < Graphique.YConsole; yConsole++)
         {
@@ -128,7 +165,7 @@ public class Monde
                         else
                         {
                             ChangerCouleurEtat(1);
-                            Console.Write(ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].Design[yCase]);
+                            Console.Write(Graphique.PlantesDesign[ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].TypePlante][yCase]);
                         }
                         //ne faire un espace après la derniere case
                         if (xGrille != XTailleGrille - 1)
@@ -158,12 +195,26 @@ public class Monde
             }
             Console.WriteLine("");
         }
+        Console.ForegroundColor = Graphique.Palette["Information"];
+        if (MenuSelectionnee == "Planter" && SectionSelectionnee != "Retour")
+        {
+            Console.Write("Prix");
+            Graphique.AfficherDictionnaire(Constantes.PlantesNecessaireConstruction[SectionSelectionnee], Graphique.Palette["Information"]);
+        }
+        else if (SectionSelectionnee == "Demonter" && CaseSelectionneePossible && CaseSelectionnee[0] != -1 && CaseSelectionnee[1] != -1)
+        {
+            Console.Write("Recuperer");
+            string TypePlantePotentiellementDetruite = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].TypePlante;
+            Graphique.AfficherDictionnaire(CalculerRemboursementConstruction(Constantes.PlantesNecessaireConstruction[TypePlantePotentiellementDetruite]), Graphique.Palette["Information"]);
+        }
+        else
+            Console.ForegroundColor = Graphique.Palette["Message"];
+        Console.WriteLine("\n" + Message);
     }
 
     //action 
     public void GererEntreeClavier()
     {
-        Affichage();
         Console.ForegroundColor = Graphique.Palette["Message"];
         Console.WriteLine("Fleche du haut et du bas pour naviguer espace pour valider");
         ConsoleKeyInfo touche = Console.ReadKey(true);
@@ -180,16 +231,70 @@ public class Monde
 
             //valider
             case ConsoleKey.Enter:
+                ValiderEntre();
                 break;
-            default:
-                {
-                    GererEntreeClavier();
-                } // Appel récursif
-                return; // Important pour ne pas continuer après l'appel récursif
         }
         // Tu peux faire d'autres trucs ici avec la variable `a`
     }
 
+    public bool PeutConstruirePlante(string nomPlante)
+    {
+        if (!Constantes.PlantesNecessaireConstruction.ContainsKey(nomPlante))
+            return false;
+
+        var necessaire = Constantes.PlantesNecessaireConstruction[nomPlante];
+
+        foreach (var composant in necessaire)
+        {
+            string nom = composant.Key;
+            int quantiteRequise = composant.Value;
+
+            if (!Composants.ContainsKey(nom) || Composants[nom] < quantiteRequise)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    public void ValiderEntre()
+    {
+        if (SectionSelectionnee == "Retour")
+        {
+            MenuSelectionnee = PrecedentMenuSelectionnee;
+            SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
+
+        }
+        else if (MenuSelectionnee == "Planter")
+        {
+
+            TypePlanteSelectionne = SectionSelectionnee;
+            if (PeutConstruirePlante(TypePlanteSelectionne))
+            {
+                SelectionPlante();
+            }
+            else
+            {
+                Message = "Pas assez de composants";
+            }
+
+        }
+        else if (SectionSelectionnee == "Demonter")
+        {
+            SelectionPlante();
+        }
+        else if (SectionSelectionnee == "Passer")
+        {
+            Passer = true;
+        }
+
+        else
+        {
+            PrecedentMenuSelectionnee = MenuSelectionnee;
+            MenuSelectionnee = SectionSelectionnee;
+            SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
+        }
+    }
     public void PrendreSectionSuivantePrecedente(bool suivante)
     {
         var valeurs = Constantes.Menus[MenuSelectionnee].Values.ToList();
@@ -205,13 +310,8 @@ public class Monde
         else
             indexRenvoye = (index - 1 + valeurs.Count) % valeurs.Count;
         SectionSelectionnee = valeurs[indexRenvoye];
-        GererEntreeClavier();
     }
 
-    public void Valider()
-    {
-
-    }
     //action sur plante
 
     public bool[,] VerifierPlanter()
@@ -226,17 +326,14 @@ public class Monde
                 {
                     int x = plante.Coord[0];
                     int y = plante.Coord[1];
-                    int espacement = plante.EspacementNecessaire; // propriété supposée de la plante
+                    int espacement = plante.EspacementNecessaire;
 
-                    // Définir la zone à interdire autour de la plante
                     for (int dx = -espacement; dx <= espacement; dx++)
                     {
                         for (int dy = -espacement; dy <= espacement; dy++)
                         {
                             int nx = x + dx;
                             int ny = y + dy;
-
-                            // Vérifier que la case est dans les limites de la grille
                             if (nx >= 0 && nx < XTailleGrille && ny >= 0 && ny < YTailleGrille)
                             {
                                 emplacementPasPossible[nx, ny] = true;
@@ -248,6 +345,7 @@ public class Monde
         }
         return emplacementPasPossible;
     }
+
     public void ActionPossible(bool emplacementPasPossible)
     {
         if (MenuSelectionnee == "Planter")
@@ -257,7 +355,7 @@ public class Monde
             else
                 CaseSelectionneePossible = true;
         }
-        else if (MenuSelectionnee == "Demonter" || MenuSelectionnee == "Arroser")
+        else if (SectionSelectionnee == "Demonter" || MenuSelectionnee == "Arroser")
         {
             if (ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] != null)
                 CaseSelectionneePossible = true;
@@ -305,9 +403,9 @@ public class Monde
                     {
                         if (MenuSelectionnee == "Planter")
                         {
-                            Planter();
+                            Planter(TypePlanteSelectionne);
                         }
-                        else if (MenuSelectionnee == "Demonter")
+                        else if (SectionSelectionnee == "Demonter")
                         {
                             DemonterPlante();
                         }
@@ -327,8 +425,6 @@ public class Monde
 
         } while (!annuler && !valider);
         CaseSelectionnee = [-1, -1];
-        MenuSelectionnee = "MenuGeneral";
-        SectionSelectionnee = "Retour";
         Affichage();
     }
     public int[] CoordCase(int xActu, int yActu, int xTranslation, int yTranslation)
@@ -343,22 +439,96 @@ public class Monde
         var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
         if (plante != null)
         {
+            string TypePlanteDetruite = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].TypePlante;
             ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] = null;
+            RembourserConstruction(Constantes.PlantesNecessaireConstruction[TypePlanteDetruite]);
             // Exemple : ajouter des composants récupérés
         }
         //selectionnerPlantes
         //retirer
         //ajouter aux dico composants
     }
-
-    public void Planter()
+    public void PayerConstruction(Dictionary<string, int> necessaire)
     {
+        //payer cout de construction
 
-        if (CaseSelectionneePossible)
+        foreach (var composant in necessaire)
         {
-            //ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] = new Plante(ListParcelle[ParcelleSlectionnee].IndexParcelle, CaseSelectionnee[0], CaseSelectionnee[1]);
+            string nom = composant.Key;
+            int quantite = composant.Value;
+
+            // Décrémente les composants utilisés
+            Composants[nom] -= quantite;
         }
     }
+    public void RembourserConstruction(Dictionary<string, int> necessaire)
+    {
+        //rembourser cout de construction
+
+        foreach (var composant in necessaire)
+        {
+            string nom = composant.Key;
+            int quantite = (int)Math.Round(composant.Value * Constantes.Remboursement);
+
+            // Décrémente les composants utilisés
+            Composants[nom] += quantite;
+        }
+    }
+    public Dictionary<string, int> CalculerRemboursementConstruction(Dictionary<string, int> necessaire)
+    {
+        Dictionary<string, int> remboursement = new Dictionary<string, int>();
+
+        foreach (var composant in necessaire)
+        {
+            string nom = composant.Key;
+            int quantite = (int)Math.Round(composant.Value * Constantes.Remboursement); // ou Floor/Ceiling selon la logique
+
+            remboursement[nom] = quantite;
+        }
+
+        return remboursement;
+    }
+
+
+    public void Planter(string type, bool initilisation = false)
+    {
+        if (CaseSelectionneePossible || initilisation)
+        {
+            if (!Constantes.PlantesNecessaireConstruction.ContainsKey(type))
+            {
+                Console.WriteLine("Type de plante inconnu : " + type);
+                return;
+            }
+            if (!initilisation)
+                PayerConstruction(Constantes.PlantesNecessaireConstruction[type]);
+            if (type == "PoMWier")
+            {
+                ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] =
+                    new PoMWier(ListParcelle[ParcelleSlectionnee], CaseSelectionnee[0], CaseSelectionnee[1]);
+            }
+            else if (type == "Margu-ee-rite")
+            {
+                ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] =
+                    new Marguerite(ListParcelle[ParcelleSlectionnee], CaseSelectionnee[0], CaseSelectionnee[1]);
+            }
+            else if (type == "Rob-ose")
+            {
+                ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] =
+                    new Robose(ListParcelle[ParcelleSlectionnee], CaseSelectionnee[0], CaseSelectionnee[1]);
+            }
+            else if (type == "LierR3")
+            {
+                ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] =
+                    new Lierre(ListParcelle[ParcelleSlectionnee], CaseSelectionnee[0], CaseSelectionnee[1]);
+            }
+            else if (type == "Po1rier")
+            {
+                ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] =
+                    new Poirier(ListParcelle[ParcelleSlectionnee], CaseSelectionnee[0], CaseSelectionnee[1]);
+            }
+        }
+    }
+
     public void ArroserPlante()
     {
         var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
