@@ -33,6 +33,7 @@ public static class Constantes
        { "Acheter", new Dictionary<int, string> {
           { 6, "plaque" },
           { 8, "tige" },
+          { 10, "vis" },
           { 18, "Retour"}
     }},
      { "Planter", new Dictionary<int, string> {
