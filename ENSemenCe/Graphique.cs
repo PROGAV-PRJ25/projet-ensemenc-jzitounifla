@@ -104,7 +104,12 @@ public static class Graphique
     }}
 };
 
-
+    //DESIGN Creature :
+    public static readonly Dictionary<int, string[]> CreaturesDesign = new() {
+    {1, ["       ", "    ►   ", "    |   ", "   __   " ]},
+    {2, ["   Ø►   ", "    █   ", "   ▄█   ", "   |    " ]},
+    {3,["       ", "    ►   ", "    |   ", "   __   " ]},
+};
     //DESIGN PLANTES :
     public static readonly Dictionary<string, string[]> PlantesDesign = new() {
     {"Margu-ee-rite", ["❋ ❋ ❋ ❋ "," ❋ ❋ ❋ ❋","❋ ❋ ❋ ❋ "," ❋ ❋ ❋ ❋"]},
