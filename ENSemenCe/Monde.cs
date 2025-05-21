@@ -69,7 +69,229 @@ public class Monde
             { "poires hybrides", 0 }         // Poirier
         };
     }
-    public bool ModeUrgenceTirage()
+    public void InitialisationPlante() //ON PLANTE QQUES MARGU-EE-RITES POUR COMMENCER LE JEU
+    {
+        CaseSelectionnee[1] = 0;
+        for (int i = 0; i < XTailleGrille; i += 2)
+        {
+            CaseSelectionnee[0] = i;
+            Planter("Margu-ee-rite", true);
+        }
+        CaseSelectionnee[0] = -1;
+        CaseSelectionnee[0] = -1;
+    }
+
+    //Fonctions pour le déroulement des tours
+    public void Jouer() //LA BOUCLE GÉNÉRALE DE JEU !! LÀ QU'À LIEU LE TOUR
+    {
+        Passer = false;
+        Mois = -1;
+        while (true)
+        {
+            //tirer mode urgence
+            Passer = false;
+            Mois = (Mois + 1) % DonneesClimatiques.TousLesMois.Count();
+            Urgence = ModeUrgenceTirage();
+            while (!Passer)
+            {
+                Affichage();
+                GererEntreeClavier();
+            }
+            //si mode urgence non =>
+            PasserTour();
+        }
+
+    }
+    public void PasserTour() //PASSER LE TOUR
+    {
+        //composants
+        //faire grandire
+        //huile
+    }
+
+    //Navigation et touches
+    public void ValiderEntre()//GESTION DES ACTIONS A EXECUTER QUAND ON TAPE ENTREE
+    {
+        if (SectionSelectionnee == "Retour")
+        {
+            MenuSelectionnee = Origin;
+            SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
+
+        }
+        else if (MenuSelectionnee == "Planter")
+        {
+
+            TypePlanteSelectionne = SectionSelectionnee;
+            if (PeutConstruirePlante(TypePlanteSelectionne))
+            {
+                SelectionCase();
+            }
+            else
+            {
+                Message = "Pas assez de composants";
+            }
+
+        }
+        else if (MenuSelectionnee == "Acheter")
+        {
+            if (Composants["boulons"] >= Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee])
+            {
+                Acheter();
+            }
+        }
+        else if (SectionSelectionnee == "Demonter")
+        {
+            SelectionCase();
+        }
+        else if (MenuSelectionnee == "Ameliorer")
+        {
+            Ameliorer();
+
+        }
+        else if (SectionSelectionnee == "Passer")
+        {
+            Passer = true;
+        }
+        else if (SectionSelectionnee == "VendreRecolte")
+        {
+            VendreRecolte();
+        }
+
+        else
+        {
+            MenuSelectionnee = SectionSelectionnee;
+            SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
+        }
+    }
+    public void GererEntreeClavier()//DEPLACEMENTS DANS LES MENUS
+    {
+        Console.ForegroundColor = Graphique.Palette["Message"];
+        Console.WriteLine("Fleche du haut et du bas pour naviguer espace pour valider");
+        ConsoleKeyInfo touche = Console.ReadKey(true);
+        switch (touche.Key)
+        {
+            //Up et Down se déplacer
+            case ConsoleKey.UpArrow:
+                PrendreSectionSuivantePrecedente(false);
+                break;
+
+            case ConsoleKey.DownArrow:
+                PrendreSectionSuivantePrecedente(true);
+                break;
+
+            //valider
+            case ConsoleKey.Enter:
+                ValiderEntre();
+                break;
+        }
+        // Tu peux faire d'autres trucs ici avec la variable `a`
+    }
+    public void PrendreSectionSuivantePrecedente(bool suivante)//RETOURNE LE PROCHAIN MENU
+    {
+        var valeurs = Constantes.Menus[MenuSelectionnee].Values.ToList();
+        int index = valeurs.IndexOf(SectionSelectionnee);
+
+        if (index == -1)
+        {
+            throw new ArgumentException($"Clé '{SectionSelectionnee}' non trouvée dans le dictionnaire.");
+        }
+        int indexRenvoye = 0;
+        if (suivante)
+            indexRenvoye = (index + 1) % valeurs.Count;
+        else
+            indexRenvoye = (index - 1 + valeurs.Count) % valeurs.Count;
+        SectionSelectionnee = valeurs[indexRenvoye];
+    }
+    public void SelectionCase()//SELECTIONNE UNE CASE
+    {
+        CaseSelectionnee = [0, 0];
+        bool annuler = false;
+        bool valider = false;
+        string consigne = "fleche pour se deplacer, entree pour valider, e pour annuler";
+        bool[,] emplacementPasPossible = VerifierPlanter();
+        CaseSelectionneePossible = false;
+        do
+        {
+            ActionPossible(emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]]);
+            Affichage();
+            Console.ForegroundColor = Graphique.Palette["Message"];
+            Console.WriteLine(consigne);
+            ConsoleKeyInfo touche = Console.ReadKey(true);
+            switch (touche.Key)
+            {
+                //Up et Down se déplacer
+                case ConsoleKey.UpArrow:
+                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], 0, -1);
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], 0, 1);
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], 1, 0);
+                    break;
+
+                case ConsoleKey.LeftArrow:
+                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], -1, 0);
+                    break;
+                //valider
+                case ConsoleKey.Enter:
+                    if (CaseSelectionneePossible)
+                    {
+                        if (MenuSelectionnee == "Planter")
+                        {
+                            Planter(TypePlanteSelectionne);
+                        }
+                        else if (SectionSelectionnee == "Demonter")
+                        {
+                            DemonterPlante();
+                        }
+                        else if (MenuSelectionnee == "Arroser")
+                        {
+                            ArroserPlante();
+                        }
+                        valider = true;
+                    }
+                    break;
+                //annuler
+                case ConsoleKey.E:
+                    annuler = true;
+                    break;
+            }
+            ActionPossible(emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]]);
+
+        } while (!annuler && !valider);
+        CaseSelectionnee = [-1, -1];
+        Affichage();
+    }
+    public void ActionPossible(bool emplacementPasPossible)//ACTUALISE L ETAT DE L ACTION SELON L EMPLACEMENT DU CURSEUR ET L ACTION EN COURS
+    {
+        if (MenuSelectionnee == "Planter")
+        {
+            if (emplacementPasPossible)
+                CaseSelectionneePossible = false;
+            else
+                CaseSelectionneePossible = true;
+        }
+        else if (SectionSelectionnee == "Demonter" || MenuSelectionnee == "Arroser")
+        {
+            if (ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] != null)
+                CaseSelectionneePossible = true;
+            else
+                CaseSelectionneePossible = false;
+        }
+    }
+    public int[] CoordCase(int xActu, int yActu, int xTranslation, int yTranslation)//ACTUALISE LA POSITION DU CURSEUR
+    {
+        int[] coord = [xActu, yActu];
+        if ((xActu + xTranslation >= 0) && (yActu + yTranslation >= 0) && (xActu + xTranslation < XTailleGrille) && (yActu + yTranslation < YTailleGrille))
+            coord = [xActu + xTranslation, yActu + yTranslation];
+        return coord;
+    }
+
+    //Mode urgence
+    public bool ModeUrgenceTirage()//DECLENCHE OU PAS LE MODE URGENCE
     {
         bool urgence = false;
         double proba = Rnd.NextDouble(); // nombre entre 0.0 et 1.0
@@ -85,7 +307,7 @@ public class Monde
         }
         return urgence;
     }
-    public void ModeUrgenceFin()
+    public void ModeUrgenceFin()//REVIENT EN MODE NORMAL
     {
         Urgence = false;
         CreatureMonde = null;
@@ -93,7 +315,7 @@ public class Monde
         MenuSelectionnee = "MenuGeneral";
         SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
     }
-    public void FaireApparaitreCreature(int niveau)
+    public void FaireApparaitreCreature(int niveau)//CREATURE 
     {
         if (ListParcelle[ParcelleSlectionnee].NiveauCloture > niveau)
         {
@@ -122,17 +344,8 @@ public class Monde
             ListParcelle[ParcelleSlectionnee].MatricePlantes[CreatureMonde.X, CreatureMonde.Y] = null;
         }
     }
-    public void InitialisationPlante() //ON PLANTE QQUES MARGU-EE-RITES POUR COMMENCER LE JEU
-    {
-        CaseSelectionnee[1] = 0;
-        for (int i = 0; i < XTailleGrille; i += 2)
-        {
-            CaseSelectionnee[0] = i;
-            Planter("Margu-ee-rite", true);
-        }
-        CaseSelectionnee[0] = -1;
-        CaseSelectionnee[0] = -1;
-    }
+
+    //Affichage
     public void ChangerCouleurEtat(int Etat) //CHANGER LA COULEUR DES PLANTES SELON LEUR ETAT
     {
         if (Etat == 1)
@@ -142,33 +355,7 @@ public class Monde
         else
             Console.ForegroundColor = ConsoleColor.Green;
     }
-    public void Jouer() //LA BOUCLE GÉNÉRALE DE JEU !! LÀ QU'À LIEU LE TOUR
-    {
-        Passer = false;
-        Mois = -1;
-        while (true)
-        {
-            //tirer mode urgence
-            Passer = false;
-            Mois = (Mois + 1) % DonneesClimatiques.TousLesMois.Count();
-            Urgence = ModeUrgenceTirage();
-            while (!Passer)
-            {
-                Affichage();
-                GererEntreeClavier();
-            }
-            //si mode urgence non =>
-            PasserTour();
-        }
-
-    }
-    public void PasserTour() //PASSER LE TOUR
-    {
-        //composants
-        //faire grandire
-        //huile
-    }
-    public void Affichage()
+    public void Affichage()//AFFICHE LA PARTIE PRINCIPAL DU JEU
     {
         //coordonnees absolue
         int YTailleGrilleCaractere = (Graphique.YInterCase + Graphique.YTailleCase) * YTailleGrille + 1;
@@ -278,7 +465,7 @@ public class Monde
         Graphique.AfficherRobot(ListParcelle[ParcelleSlectionnee].NiveauRobots);
         AffichageInformation();
     }
-    public void AffichageInformation()
+    public void AffichageInformation()//AFFICHE LES AUTRES INFORMATIONS SELON LE MENU
     {
         Console.ForegroundColor = Graphique.Palette["Information"];
         if (MenuSelectionnee == "Planter" && SectionSelectionnee != "Retour")
@@ -322,192 +509,10 @@ public class Monde
         }
         Console.WriteLine();
     }
-    public int NiveauAmelioration()
-    {
-        int niveau = 1;
-        if (SectionSelectionnee == "Arroseurs")
-        {
-            niveau = ListParcelle[ParcelleSlectionnee].NiveauArroseur;
-        }
-        else if (SectionSelectionnee == "Clotures")
-        {
-            niveau = ListParcelle[ParcelleSlectionnee].NiveauCloture;
-        }
-        else if (SectionSelectionnee == "Palissades")
-        {
-            niveau = ListParcelle[ParcelleSlectionnee].NiveauPalissade;
-        }
-        else if (SectionSelectionnee == "Robots-Travailleurs")
-        {
-            niveau = ListParcelle[ParcelleSlectionnee].NiveauRobots;
-        }
-        return niveau;
-    }
-    //action 
-    public void GererEntreeClavier()
-    {
-        Console.ForegroundColor = Graphique.Palette["Message"];
-        Console.WriteLine("Fleche du haut et du bas pour naviguer espace pour valider");
-        ConsoleKeyInfo touche = Console.ReadKey(true);
-        switch (touche.Key)
-        {
-            //Up et Down se déplacer
-            case ConsoleKey.UpArrow:
-                PrendreSectionSuivantePrecedente(false);
-                break;
 
-            case ConsoleKey.DownArrow:
-                PrendreSectionSuivantePrecedente(true);
-                break;
-
-            //valider
-            case ConsoleKey.Enter:
-                ValiderEntre();
-                break;
-        }
-        // Tu peux faire d'autres trucs ici avec la variable `a`
-    }
-
-    public bool PeutConstruirePlante(string nomPlante)
-    {
-        if (!Constantes.PlantesNecessaireConstruction.ContainsKey(nomPlante))
-            return false;
-
-        var necessaire = Constantes.PlantesNecessaireConstruction[nomPlante];
-
-        foreach (var composant in necessaire)
-        {
-            string nom = composant.Key;
-            int quantiteRequise = composant.Value;
-
-            if (!Composants.ContainsKey(nom) || Composants[nom] < quantiteRequise)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-    public void ValiderEntre()
-    {
-        if (SectionSelectionnee == "Retour")
-        {
-            MenuSelectionnee = Origin;
-            SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
-
-        }
-        else if (MenuSelectionnee == "Planter")
-        {
-
-            TypePlanteSelectionne = SectionSelectionnee;
-            if (PeutConstruirePlante(TypePlanteSelectionne))
-            {
-                SelectionPlante();
-            }
-            else
-            {
-                Message = "Pas assez de composants";
-            }
-
-        }
-        else if (MenuSelectionnee == "Acheter")
-        {
-            if (Composants["boulons"] >= Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee])
-            {
-                Acheter();
-            }
-        }
-        else if (SectionSelectionnee == "Demonter")
-        {
-            SelectionPlante();
-        }
-        else if (MenuSelectionnee == "Ameliorer")
-        {
-            Ameliorer();
-
-        }
-        else if (SectionSelectionnee == "Passer")
-        {
-            Passer = true;
-        }
-        else if (SectionSelectionnee == "VendreRecolte")
-        {
-            VendreRecolte();
-        }
-
-        else
-        {
-            MenuSelectionnee = SectionSelectionnee;
-            SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
-        }
-    }
-    public void Acheter()
-    {
-        //achat par pack
-        Composants["boulons"] -= Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee];
-        Composants[SectionSelectionnee] += Constantes.PackAchat;
-    }
-    public void VendreRecolte()
-    {
-        {
-            int totalArgent = 0;
-            foreach (var fruit in FruitsProduits.Keys.ToList())
-            {
-                int quantite = FruitsProduits[fruit];
-                int gainUnitaire = Constantes.FruitsGain.ContainsKey(fruit) ? Constantes.FruitsGain[fruit] : 0;
-
-                totalArgent += quantite * gainUnitaire;
-                // Réinitialiser le stock à 0
-                FruitsProduits[fruit] = 0;
-            }
-            Composants["boulons"] += totalArgent;
-        }
-    }
-
-    public void Ameliorer() //POUR AMÉLIORER LE MATÉRIEL D'UNE PARCELLE
-    {
-        if ((SectionSelectionnee == "Arroseurs") && ListParcelle[ParcelleSlectionnee].NiveauArroseur < 3)
-        {
-            ListParcelle[ParcelleSlectionnee].NiveauArroseur += 1;
-            ButAmelioration = "Economise de l'huile lors de l'arrosage";
-        }
-        else if (SectionSelectionnee == "Clotures" && ListParcelle[ParcelleSlectionnee].NiveauArroseur < 3)
-        {
-            ListParcelle[ParcelleSlectionnee].NiveauCloture += 1;
-            ButAmelioration = "Reduit les risques d'imprevus";
-        }
-        else if ((SectionSelectionnee == "Palissades") && ListParcelle[ParcelleSlectionnee].NiveauPalissade < 3)
-        {
-            ListParcelle[ParcelleSlectionnee].NiveauPalissade += 1;
-            ButAmelioration = "Protege vos plantes";
-        }
-        else if ((SectionSelectionnee == "Robots-Travailleurs") && ListParcelle[ParcelleSlectionnee].NiveauArroseur < 3)
-        {
-            ListParcelle[ParcelleSlectionnee].NiveauRobots = 2;
-            ButAmelioration = "Augmente les récolotes";
-        }
-
-    }
-    public void PrendreSectionSuivantePrecedente(bool suivante)
-    {
-        var valeurs = Constantes.Menus[MenuSelectionnee].Values.ToList();
-        int index = valeurs.IndexOf(SectionSelectionnee);
-
-        if (index == -1)
-        {
-            throw new ArgumentException($"Clé '{SectionSelectionnee}' non trouvée dans le dictionnaire.");
-        }
-        int indexRenvoye = 0;
-        if (suivante)
-            indexRenvoye = (index + 1) % valeurs.Count;
-        else
-            indexRenvoye = (index - 1 + valeurs.Count) % valeurs.Count;
-        SectionSelectionnee = valeurs[indexRenvoye];
-    }
-
-    //action sur plante
-
-    public bool[,] VerifierPlanter()
+    //ACTIONS
+    //planter
+    public bool[,] VerifierPlanter()//VERIFIE SI LA CASE EST DISPONIBLE POUR PLANTER
     {
         bool[,] emplacementPasPossible = new bool[XTailleGrille, YTailleGrille];
 
@@ -538,151 +543,26 @@ public class Monde
         }
         return emplacementPasPossible;
     }
-
-    public void ActionPossible(bool emplacementPasPossible)
+    public bool PeutConstruirePlante(string nomPlante)//VERIFIE LES RESSOURCES POUR LA CONSTRUCTION
     {
-        if (MenuSelectionnee == "Planter")
-        {
-            if (emplacementPasPossible)
-                CaseSelectionneePossible = false;
-            else
-                CaseSelectionneePossible = true;
-        }
-        else if (SectionSelectionnee == "Demonter" || MenuSelectionnee == "Arroser")
-        {
-            if (ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] != null)
-                CaseSelectionneePossible = true;
-            else
-                CaseSelectionneePossible = false;
-        }
-    }
+        if (!Constantes.PlantesNecessaireConstruction.ContainsKey(nomPlante))
+            return false;
 
-    public void SelectionPlante()
-    {
-        CaseSelectionnee = [0, 0];
-        bool annuler = false;
-        bool valider = false;
-        string consigne = "fleche pour se deplacer, entree pour valider, e pour annuler";
-        bool[,] emplacementPasPossible = VerifierPlanter();
-        CaseSelectionneePossible = false;
-        do
+        var necessaire = Constantes.PlantesNecessaireConstruction[nomPlante];
+
+        foreach (var composant in necessaire)
         {
-            ActionPossible(emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]]);
-            Affichage();
-            Console.ForegroundColor = Graphique.Palette["Message"];
-            Console.WriteLine(consigne);
-            ConsoleKeyInfo touche = Console.ReadKey(true);
-            switch (touche.Key)
+            string nom = composant.Key;
+            int quantiteRequise = composant.Value;
+
+            if (!Composants.ContainsKey(nom) || Composants[nom] < quantiteRequise)
             {
-                //Up et Down se déplacer
-                case ConsoleKey.UpArrow:
-                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], 0, -1);
-                    break;
-
-                case ConsoleKey.DownArrow:
-                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], 0, 1);
-                    break;
-
-                case ConsoleKey.RightArrow:
-                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], 1, 0);
-                    break;
-
-                case ConsoleKey.LeftArrow:
-                    CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], -1, 0);
-                    break;
-                //valider
-                case ConsoleKey.Enter:
-                    if (CaseSelectionneePossible)
-                    {
-                        if (MenuSelectionnee == "Planter")
-                        {
-                            Planter(TypePlanteSelectionne);
-                        }
-                        else if (SectionSelectionnee == "Demonter")
-                        {
-                            DemonterPlante();
-                        }
-                        else if (MenuSelectionnee == "Arroser")
-                        {
-                            ArroserPlante();
-                        }
-                        valider = true;
-                    }
-                    break;
-                //annuler
-                case ConsoleKey.E:
-                    annuler = true;
-                    break;
+                return false;
             }
-            ActionPossible(emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]]);
-
-        } while (!annuler && !valider);
-        CaseSelectionnee = [-1, -1];
-        Affichage();
-    }
-    public int[] CoordCase(int xActu, int yActu, int xTranslation, int yTranslation)
-    {
-        int[] coord = [xActu, yActu];
-        if ((xActu + xTranslation >= 0) && (yActu + yTranslation >= 0) && (xActu + xTranslation < XTailleGrille) && (yActu + yTranslation < YTailleGrille))
-            coord = [xActu + xTranslation, yActu + yTranslation];
-        return coord;
-    }
-    public void DemonterPlante()
-    {
-        var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
-        if (plante != null)
-        {
-            string TypePlanteDetruite = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].TypePlante;
-            ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] = null;
-            RembourserConstruction(Constantes.PlantesNecessaireConstruction[TypePlanteDetruite]);
-            // Exemple : ajouter des composants récupérés
-        }
-        //selectionnerPlantes
-        //retirer
-        //ajouter aux dico composants
-    }
-    public void PayerConstruction(Dictionary<string, int> necessaire)
-    {
-        //payer cout de construction
-
-        foreach (var composant in necessaire)
-        {
-            string nom = composant.Key;
-            int quantite = composant.Value;
-
-            // Décrémente les composants utilisés
-            Composants[nom] -= quantite;
-        }
-    }
-    public void RembourserConstruction(Dictionary<string, int> necessaire)
-    {
-        //rembourser cout de construction
-
-        foreach (var composant in necessaire)
-        {
-            string nom = composant.Key;
-            int quantite = (int)Math.Round(composant.Value * Constantes.Remboursement);
-
-            // Décrémente les composants utilisés
-            Composants[nom] += quantite;
-        }
-    }
-    public Dictionary<string, int> CalculerRemboursementConstruction(Dictionary<string, int> necessaire)
-    {
-        Dictionary<string, int> remboursement = new Dictionary<string, int>();
-
-        foreach (var composant in necessaire)
-        {
-            string nom = composant.Key;
-            int quantite = (int)Math.Round(composant.Value * Constantes.Remboursement); // ou Floor/Ceiling selon la logique
-
-            remboursement[nom] = quantite;
         }
 
-        return remboursement;
+        return true;
     }
-
-
     public void Planter(string type, bool initilisation = false) //PLANTER UNE NOUVELLE PLANTE SUR LA PARCELLE
     {
         if (CaseSelectionneePossible || initilisation)
@@ -721,7 +601,132 @@ public class Monde
             }
         }
     }
+    public void PayerConstruction(Dictionary<string, int> necessaire)//ACTUALISE COMPOSANTS APRES ACHAT
+    {
+        //payer cout de construction
 
+        foreach (var composant in necessaire)
+        {
+            string nom = composant.Key;
+            int quantite = composant.Value;
+
+            // Décrémente les composants utilisés
+            Composants[nom] -= quantite;
+        }
+    }
+
+    //demonter
+    public void DemonterPlante()//SUPPRIME PLANTE
+    {
+        var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
+        if (plante != null)
+        {
+            string TypePlanteDetruite = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].TypePlante;
+            ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] = null;
+            RembourserConstruction(Constantes.PlantesNecessaireConstruction[TypePlanteDetruite]);
+        }
+    }
+    public void RembourserConstruction(Dictionary<string, int> necessaire)//ACTUALISE COMPOSANTS APRES REMBOURSEMENT
+    {
+        //rembourser cout de construction
+
+        foreach (var composant in necessaire)
+        {
+            string nom = composant.Key;
+            int quantite = (int)Math.Round(composant.Value * Constantes.Remboursement);
+
+            // Décrémente les composants utilisés
+            Composants[nom] += quantite;
+        }
+    }
+    public Dictionary<string, int> CalculerRemboursementConstruction(Dictionary<string, int> necessaire)//AFFICHE REMBOURSEMENT
+    {
+        Dictionary<string, int> remboursement = new Dictionary<string, int>();
+
+        foreach (var composant in necessaire)
+        {
+            string nom = composant.Key;
+            int quantite = (int)Math.Round(composant.Value * Constantes.Remboursement); // ou Floor/Ceiling selon la logique
+
+            remboursement[nom] = quantite;
+        }
+
+        return remboursement;
+    }
+
+    //ameliorer
+    public int NiveauAmelioration()//RETOURNE LE NIVEAU DE L ITEM SELECTIONNE
+    {
+        int niveau = 1;
+        if (SectionSelectionnee == "Arroseurs")
+        {
+            niveau = ListParcelle[ParcelleSlectionnee].NiveauArroseur;
+        }
+        else if (SectionSelectionnee == "Clotures")
+        {
+            niveau = ListParcelle[ParcelleSlectionnee].NiveauCloture;
+        }
+        else if (SectionSelectionnee == "Palissades")
+        {
+            niveau = ListParcelle[ParcelleSlectionnee].NiveauPalissade;
+        }
+        else if (SectionSelectionnee == "Robots-Travailleurs")
+        {
+            niveau = ListParcelle[ParcelleSlectionnee].NiveauRobots;
+        }
+        return niveau;
+    }
+    public void Ameliorer() //POUR AMÉLIORER LE MATÉRIEL D'UNE PARCELLE
+    {
+        if ((SectionSelectionnee == "Arroseurs") && ListParcelle[ParcelleSlectionnee].NiveauArroseur < 3)
+        {
+            ListParcelle[ParcelleSlectionnee].NiveauArroseur += 1;
+            ButAmelioration = "Economise de l'huile lors de l'arrosage";
+        }
+        else if (SectionSelectionnee == "Clotures" && ListParcelle[ParcelleSlectionnee].NiveauArroseur < 3)
+        {
+            ListParcelle[ParcelleSlectionnee].NiveauCloture += 1;
+            ButAmelioration = "Reduit les risques d'imprevus";
+        }
+        else if ((SectionSelectionnee == "Palissades") && ListParcelle[ParcelleSlectionnee].NiveauPalissade < 3)
+        {
+            ListParcelle[ParcelleSlectionnee].NiveauPalissade += 1;
+            ButAmelioration = "Protege vos plantes";
+        }
+        else if ((SectionSelectionnee == "Robots-Travailleurs") && ListParcelle[ParcelleSlectionnee].NiveauArroseur < 3)
+        {
+            ListParcelle[ParcelleSlectionnee].NiveauRobots = 2;
+            ButAmelioration = "Augmente les récolotes";
+        }
+
+    }
+
+    //marche
+    public void Acheter()//ACHETER DES COMPOSANTS AU MARCHE
+    {
+        //achat par pack
+        Composants["boulons"] -= Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee];
+        Composants[SectionSelectionnee] += Constantes.PackAchat;
+    }
+    public void VendreRecolte()//VENDRE SA RECOLTE POUR DES BOULONS
+    {
+        {
+            int totalArgent = 0;
+            foreach (var fruit in FruitsProduits.Keys.ToList())
+            {
+                int quantite = FruitsProduits[fruit];
+                int gainUnitaire = Constantes.FruitsGain.ContainsKey(fruit) ? Constantes.FruitsGain[fruit] : 0;
+
+                totalArgent += quantite * gainUnitaire;
+                // Réinitialiser le stock à 0
+                FruitsProduits[fruit] = 0;
+            }
+            Composants["boulons"] += totalArgent;
+        }
+    }
+
+
+    //En cours
     public void ArroserPlante() //ARROSER LA PLANTE SÉLECTIONNÉE
     {
         var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
@@ -731,7 +736,6 @@ public class Monde
             //actualiser eau
         }
     }
-
     public void ArroserTout() //ARROSER TOUTES LES PLANTES
     {
         foreach (Parcelle parcelle in ListParcelle)
@@ -745,12 +749,10 @@ public class Monde
         int index = 0;
         ListParcelle[index].ArroserParcelle();
     }
-
     public void EclairerPlante()
     {
 
     }
-
     public void Recolter()
     {
 
