@@ -21,6 +21,9 @@ public static class Graphique
             { "CurseurNon",ConsoleColor.Red  },
             { "CurseurOui",ConsoleColor.Green  },
             { "Creature",ConsoleColor.Red  },
+            { "EtatPlante1",ConsoleColor.Red  },
+            { "EtatPlante2",ConsoleColor.Yellow  },
+            { "EtatPlante3",ConsoleColor.Green  },
     };
     //Robots
     public static readonly Dictionary<int, Dictionary<string, string>> RobotDesign = new Dictionary<int, Dictionary<string, string>> {

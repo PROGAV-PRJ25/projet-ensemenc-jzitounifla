@@ -387,15 +387,6 @@ public class Monde
         }
     }
     //Affichage
-    public void ChangerCouleurEtat(int Etat) //CHANGER LA COULEUR DES PLANTES SELON LEUR ETAT
-    {
-        if (Etat == 1)
-            Console.ForegroundColor = ConsoleColor.Red;
-        else if (Etat == 2)
-            Console.ForegroundColor = ConsoleColor.Yellow;
-        else
-            Console.ForegroundColor = ConsoleColor.Green;
-    }
     public void Affichage()//AFFICHE LA PARTIE PRINCIPAL DU JEU
     {
         //coordonnees absolue
@@ -480,7 +471,7 @@ public class Monde
                             Graphique.TracerPatternLongueurN(" ", Graphique.XTailleCase);
                         else
                         {
-                            ChangerCouleurEtat(1);
+                            Console.ForegroundColor = Graphique.Palette["EtatPlante" + ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].CalculerEtat(Mois, ListParcelle[ParcelleSlectionnee])];
                             Console.Write(Graphique.PlantesDesign[ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].TypePlante][yCase]);
                         }
                         //ne faire un espace après la derniere case
