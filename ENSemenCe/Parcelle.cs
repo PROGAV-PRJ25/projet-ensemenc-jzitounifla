@@ -15,9 +15,8 @@ public class Parcelle
     //amelioration
     public int NiveauCloture { get; set; }
     public int NiveauArroseur { get; set; }
-    public int NiveauPanneau { get; set; }
+    public int NiveauRobots { get; set; }
     public int NiveauPalissade { get; set; }
-    public int NbRobot { get; set; }
 
     //Différentes variables qui changent en fonction de la météo et du mois
     public int ElectrisationVar { get; set; }
@@ -33,10 +32,8 @@ public class Parcelle
         //non ameliore au debut
         NiveauCloture = 1;
         NiveauArroseur = 1;
-        NiveauPanneau = 1;
         NiveauPalissade = 1;
-        NbRobot = 0;
-
+        NiveauRobots = 1;
         TypeParcelle = type;
         IndexParcelle = NbParcelle;
 

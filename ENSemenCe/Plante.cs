@@ -5,7 +5,7 @@ public abstract class Plante
 {
 
   public string[] Design { get; set; } //Apparence de la plante dans le terminal
-  public string Type { get; set; } //-> une rose, une marguerite ou jsp
+  public string TypePlante { get; set; } //-> une rose, une marguerite ou jsp
   public Parcelle Parcelle { get; set; } //parcelle où elle est plantée
   public int[] Coord { get; set; } //les coordonnées de la plante, avec [x, y].
   public int EspacementNecessaire { get; set; } //l'espacement nécessaire au bien-être de la plante 
@@ -13,11 +13,11 @@ public abstract class Plante
   public Plante(Parcelle parcelle, int x, int y)
   {
     Design = ["", ""]; //euh pour l'instant y a rien 
-    Type = "Margh-ee-rite"; //marguerite par défaut, mais pas de raison que soit appelé. 
+    TypePlante = "PoMWier"; //marguerite par défaut, mais pas de raison que soit appelé. 
     Parcelle = parcelle;
     Coord = [x, y];
     EspacementNecessaire = 0;
-    DureeVie = [0, Constantes.PlantesDureeVie[Type]]; //en 0 le temps de vie vécu (ici 0 mois), en 1 le total (plus facile à accéder par la suite)
+    DureeVie = [0, Constantes.PlantesDureeVie[TypePlante]]; //en 0 le temps de vie vécu (ici 0 mois), en 1 le total (plus facile à accéder par la suite)
   }
 
   //pour les différents types de plantes, faire diff matrices qui changent les propriétés de chaque 
