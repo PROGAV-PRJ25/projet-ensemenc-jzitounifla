@@ -27,6 +27,8 @@ public static class Constantes
         { 6, "PiegeNiv1" },
         { 8, "PiegeNiv2" },
         { 10, "PiegeNiv3" },
+        { 12, "PiegeNiv4" },
+        { 18, "Retour"},
     }},
        { "Ameliorer", new Dictionary<int, string> {
         { 6, "Arroseurs" },
@@ -194,6 +196,12 @@ public static class Constantes
         {"tige", 30},
         {"vis", 25}
       }},
+      { "PiegeNiv4", new Dictionary<string, int> {
+        {"boulons", 40},
+        {"plaque", 40},
+        {"tige", 40},
+        {"vis", 30}
+      }},
     };
   public static readonly Dictionary<string, int> FruitsGain = new Dictionary<string, int>
         {
@@ -210,6 +218,7 @@ public static class Constantes
             { "tige", 2 },
             { "vis", 2 },
         };
+
   public const double Remboursement = 0.5;
   public const int PackAchat = 10;
   //urgence
