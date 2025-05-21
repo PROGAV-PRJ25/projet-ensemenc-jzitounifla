@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
+using Microsoft.VisualBasic;
 
 public class Monde
 {
@@ -30,8 +31,15 @@ public class Monde
     public string ButAmelioration { get; set; }
     public bool Passer { get; set; }
     public Dictionary<string, int> FruitsProduits { get; set; }
+    //urgence
+    public Creature CreatureMonde { get; set; }
+    //origin
+    public string Origin { get; set; }
+    public bool Urgence { get; set; }
+    Random Rnd = new Random();
     public Monde(int dimX, int dimY) //CONSTRUCTEUR MONDE
     {
+        CreatureMonde = null;
         Mois = 0;
         Message = "";
         Information = "";
@@ -60,6 +68,59 @@ public class Monde
             { "pomwies", 0 },                // PoMWier
             { "poires hybrides", 0 }         // Poirier
         };
+    }
+    public bool ModeUrgenceTirage()
+    {
+        bool urgence = false;
+        double proba = Rnd.NextDouble(); // nombre entre 0.0 et 1.0
+        Origin = "MenuGeneral";
+        if (proba <= Constantes.ProbaModeUrgence)
+        {
+            int niveau = Rnd.Next(1, 5); // 1 inclus, 5 exclus → donc entre 1 et 4
+            FaireApparaitreCreature(niveau);
+            urgence = true;
+            Origin = "MenuUrgence";
+            MenuSelectionnee = "MenuUrgence";
+            SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
+        }
+        return urgence;
+    }
+    public void ModeUrgenceFin()
+    {
+        Urgence = false;
+        CreatureMonde = null;
+        Origin = "MenuGeneral";
+        MenuSelectionnee = "MenuGeneral";
+        SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
+    }
+    public void FaireApparaitreCreature(int niveau)
+    {
+        if (ListParcelle[ParcelleSlectionnee].NiveauCloture > niveau)
+        {
+            Urgence = false;
+        }
+        if (niveau == 1)
+        {
+            CreatureMonde = new CreatureNiveau1("1");
+        }
+        else if (niveau == 2)
+        {
+            CreatureMonde = new CreatureNiveau2("2");
+        }
+        else if (niveau == 3)
+        {
+            CreatureMonde = new CreatureNiveau3("3");
+        }
+        else if (niveau == 4)
+        {
+            CreatureMonde = new CreatureNiveau4("4");
+        }
+
+        if (Urgence)
+        {
+            CreatureMonde.PositionnerSurBord(XTailleGrille, YTailleGrille);
+            ListParcelle[ParcelleSlectionnee].MatricePlantes[CreatureMonde.X, CreatureMonde.Y] = null;
+        }
     }
     public void InitialisationPlante() //ON PLANTE QQUES MARGU-EE-RITES POUR COMMENCER LE JEU
     {
@@ -90,6 +151,7 @@ public class Monde
             //tirer mode urgence
             Passer = false;
             Mois = (Mois + 1) % DonneesClimatiques.TousLesMois.Count();
+            Urgence = ModeUrgenceTirage();
             while (!Passer)
             {
                 Affichage();
@@ -168,10 +230,15 @@ public class Monde
                         //curseur
                         if (CaseSelectionnee[0] == xGrille && CaseSelectionnee[1] == yGrille)
                         {
-                            ConsoleColor couleur = ConsoleColor.Red;
+                            ConsoleColor couleur = Graphique.Palette["CurseurNon"];
                             if (CaseSelectionneePossible)
-                                couleur = ConsoleColor.Green;
+                                couleur = Graphique.Palette["CurseurOui"];
                             Graphique.TracerPatternLongueurN("█", Graphique.XTailleCase, couleur);
+                        }
+                        else if (CreatureMonde != null && CreatureMonde.X == xGrille && CreatureMonde.Y == yGrille)
+                        {
+                            Console.ForegroundColor = Graphique.Palette["Creature"];
+                            Console.Write(CreatureMonde.Design[yCase]);
                         }
                         else if (ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille] == null)
                             Graphique.TracerPatternLongueurN(" ", Graphique.XTailleCase);
@@ -325,7 +392,7 @@ public class Monde
     {
         if (SectionSelectionnee == "Retour")
         {
-            MenuSelectionnee = "MenuGeneral";
+            MenuSelectionnee = Origin;
             SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
 
         }

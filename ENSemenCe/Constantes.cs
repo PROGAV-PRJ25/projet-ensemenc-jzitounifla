@@ -13,6 +13,21 @@ public static class Constantes
         { 18, "Retour"},
         { 25, "Passer"},
     }},
+    { "MenuUrgence", new Dictionary<int, string> {
+        { 6, "Planter" },
+        { 8, "Arroser" },
+        { 10, "Demonter" },
+        { 12, "Ameliorer" },
+        { 14, "Marché" },
+        { 16, "Pieges" },
+        { 18, "Retour"},
+        { 25, "PasserAction"},
+    }},
+      { "Pieges", new Dictionary<int, string> {
+        { 6, "PiegeNiv1" },
+        { 8, "PiegeNiv2" },
+        { 10, "PiegeNiv3" },
+    }},
        { "Ameliorer", new Dictionary<int, string> {
         { 6, "Arroseurs" },
         { 8, "Clotures" },
@@ -178,4 +193,6 @@ public static class Constantes
         };
   public const double Remboursement = 0.5;
   public const int PackAchat = 10;
+
+  public const double ProbaModeUrgence = 0.4;
 }

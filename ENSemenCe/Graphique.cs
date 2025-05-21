@@ -18,6 +18,9 @@ public static class Graphique
             { "Information",ConsoleColor.Green  },
             { "Robots",ConsoleColor.Cyan },
             { "Fruit",ConsoleColor.White  },
+            { "CurseurNon",ConsoleColor.Red  },
+            { "CurseurOui",ConsoleColor.Green  },
+            { "Creature",ConsoleColor.Red  },
     };
     //Robots
     public static readonly Dictionary<int, Dictionary<string, string>> RobotDesign = new Dictionary<int, Dictionary<string, string>> {
@@ -106,9 +109,10 @@ public static class Graphique
 
     //DESIGN Creature :
     public static readonly Dictionary<int, string[]> CreaturesDesign = new() {
-    {1, ["       ", "    ►   ", "    |   ", "   __   " ]},
-    {2, ["   Ø►   ", "    █   ", "   ▄█   ", "   |    " ]},
-    {3,["       ", "    ►   ", "    |   ", "   __   " ]},
+    {1,["        ", " -----► ", "    |   ", "        " ]},
+    {2,["        ", "    ►   ", "    |   ", "   __   " ]},
+    {3,["|||||||", "| -  - |", "|      |", "| ---- |" ]},
+    {4,["   Ø►   ", "    █   ", "   ▄█   ", "   |    " ]},
 };
     //DESIGN PLANTES :
     public static readonly Dictionary<string, string[]> PlantesDesign = new() {

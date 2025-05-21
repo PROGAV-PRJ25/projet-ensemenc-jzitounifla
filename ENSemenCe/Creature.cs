@@ -1,14 +1,14 @@
 public class Creature
 {
-    // Attributs (propriétés)
     public string Nom { get; set; }
     public int Niveau { get; set; }
     public int NombreActions { get; set; }
     public int NombreDpt { get; set; }
-
     public string[] Design { get; set; }
 
-    // Constructeur par défaut
+    public int X { get; set; }
+    public int Y { get; set; }
+
     public Creature(string nom, int niveau, int nombreActions, int nombreDpt, string[] design)
     {
         Nom = nom;
@@ -16,6 +16,32 @@ public class Creature
         NombreActions = nombreActions;
         NombreDpt = nombreDpt;
         Design = design;
+    }
+
+    public void PositionnerSurBord(int dimX, int dimY)
+    {
+        Random rnd = new();
+        int bord = rnd.Next(4); // 0=haut, 1=bas, 2=gauche, 3=droite
+
+        switch (bord)
+        {
+            case 0: // haut
+                X = rnd.Next(dimX);
+                Y = 0;
+                break;
+            case 1: // bas
+                X = rnd.Next(dimX);
+                Y = dimY - 1;
+                break;
+            case 2: // gauche
+                X = 0;
+                Y = rnd.Next(dimY);
+                break;
+            case 3: // droite
+                X = dimX - 1;
+                Y = rnd.Next(dimY);
+                break;
+        }
     }
 }
 
