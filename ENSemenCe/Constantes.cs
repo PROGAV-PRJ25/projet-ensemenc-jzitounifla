@@ -30,7 +30,7 @@ public static class Constantes
 
   //Description
   public static readonly Dictionary<string, string> PlantesDescription = new Dictionary<string, string> {
-      {"Margu-ee-rite", "Cette jolie herbe folle éguaira votre potager. Attention toutefois à ne pas la laisser trop pousser… Elle pourrait bien envahir tout l’espace, et étouffer vos autres plantes."},
+      {"Margu-ee-rite", "Cette jolie herbe folle éguaiera votre potager. Attention toutefois à ne pas la laisser trop pousser… Elle pourrait bien envahir tout l’espace, et étouffer vos autres plantes."},
       {"Rob-ose", "Fleur iconique, la rob-ose est toutefois dure à entretenir. Elle est très appréciée à la vente mais attention à sa santé fragile, vous pourriez tout perdre !!"},
       {"LierR3", "Certes envahissant, ne négligez pas pour autant le LieR3 ! Ses longues lianes offrent de solides tiges de métal que vous saurez sans doute utiliser à votre avantage..."},
       {"PoMWier", "Fiable et constant, le pommier vous offre ses fruits tout au long de l'année. Certes, il est loin d'être le plus rare des arbres fruitiers, mais prenez bien soin de lui !! Un jour, un pommier pourrait vous illumier... "},
