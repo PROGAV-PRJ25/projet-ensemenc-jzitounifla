@@ -111,7 +111,7 @@ public static class Graphique
     public static readonly Dictionary<int, string[]> CreaturesDesign = new() {
     {1,["        ", " -----► ", "    |   ", "        " ]},
     {2,["        ", "    ►   ", "    |   ", "   __   " ]},
-    {3,["|||||||", "| -  - |", "|      |", "| ---- |" ]},
+    {3,["||||||||", "| -  - |", "|      |", "| ---- |" ]},
     {4,["   Ø►   ", "    █   ", "   ▄█   ", "   |    " ]},
 };
     //DESIGN PLANTES :

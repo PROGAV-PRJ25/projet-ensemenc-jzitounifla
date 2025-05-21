@@ -33,7 +33,6 @@ public class Monde
     public Dictionary<string, int> FruitsProduits { get; set; }
     //urgence
     public Creature CreatureMonde { get; set; }
-    //origin
     public string Origin { get; set; }
     public bool Urgence { get; set; }
     Random Rnd = new Random();
@@ -86,21 +85,20 @@ public class Monde
     {
         Passer = false;
         Mois = -1;
+        //boucle de jeu pour defilement d un mois
         while (true)
         {
-            //tirer mode urgence
             Passer = false;
             Mois = (Mois + 1) % DonneesClimatiques.TousLesMois.Count();
-            Urgence = ModeUrgenceTirage();
-            while (!Passer)
+            ModeUrgenceTirage();
+            //boucle pour un mois
+            while ((!Passer) || Urgence)
             {
                 Affichage();
                 GererEntreeClavier();
             }
-            //si mode urgence non =>
             PasserTour();
         }
-
     }
     public void PasserTour() //PASSER LE TOUR
     {
@@ -112,17 +110,17 @@ public class Monde
     //Navigation et touches
     public void ValiderEntre()//GESTION DES ACTIONS A EXECUTER QUAND ON TAPE ENTREE
     {
+        //condition critique
         if (SectionSelectionnee == "Retour")
         {
             MenuSelectionnee = Origin;
             SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
-
         }
         else if (MenuSelectionnee == "Planter")
         {
 
             TypePlanteSelectionne = SectionSelectionnee;
-            if (PeutConstruirePlante(TypePlanteSelectionne))
+            if (PeutConstruire(Constantes.PlantesNecessaireConstruction[TypePlanteSelectionne]))
             {
                 SelectionCase();
             }
@@ -137,6 +135,7 @@ public class Monde
             if (Composants["boulons"] >= Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee])
             {
                 Acheter();
+                TourModeUrgence();
             }
         }
         else if (SectionSelectionnee == "Demonter")
@@ -146,17 +145,28 @@ public class Monde
         else if (MenuSelectionnee == "Ameliorer")
         {
             Ameliorer();
-
+            TourModeUrgence();
         }
         else if (SectionSelectionnee == "Passer")
         {
             Passer = true;
         }
+        else if (SectionSelectionnee == "PasserAction")
+        {
+            TourModeUrgence();
+        }
         else if (SectionSelectionnee == "VendreRecolte")
         {
             VendreRecolte();
+            TourModeUrgence();
         }
-
+        else if (MenuSelectionnee == "Pieges")
+        {
+            if (PiegePossibleUtile())
+            {
+                SelectionCase();
+            }
+        }
         else
         {
             MenuSelectionnee = SectionSelectionnee;
@@ -251,6 +261,12 @@ public class Monde
                         {
                             ArroserPlante();
                         }
+                        else if (MenuSelectionnee == "Pieges")
+                        {
+                            PayerConstruction(Constantes.PiegeNecessaireConstruction[SectionSelectionnee]);
+                            ModeUrgenceFin();
+                        }
+                        valider = true;
                         valider = true;
                     }
                     break;
@@ -263,6 +279,8 @@ public class Monde
 
         } while (!annuler && !valider);
         CaseSelectionnee = [-1, -1];
+        if (valider)
+            TourModeUrgence();
         Affichage();
     }
     public void ActionPossible(bool emplacementPasPossible)//ACTUALISE L ETAT DE L ACTION SELON L EMPLACEMENT DU CURSEUR ET L ACTION EN COURS
@@ -281,6 +299,13 @@ public class Monde
             else
                 CaseSelectionneePossible = false;
         }
+        else if (MenuSelectionnee == "Pieges")
+        {
+            if (CreatureMonde.X == CaseSelectionnee[0] && CreatureMonde.Y == CaseSelectionnee[1])
+                CaseSelectionneePossible = true;
+            else
+                CaseSelectionneePossible = false;
+        }
     }
     public int[] CoordCase(int xActu, int yActu, int xTranslation, int yTranslation)//ACTUALISE LA POSITION DU CURSEUR
     {
@@ -291,21 +316,19 @@ public class Monde
     }
 
     //Mode urgence
-    public bool ModeUrgenceTirage()//DECLENCHE OU PAS LE MODE URGENCE
+    public void ModeUrgenceTirage()//DECLENCHE OU PAS LE MODE URGENCE
     {
-        bool urgence = false;
         double proba = Rnd.NextDouble(); // nombre entre 0.0 et 1.0
         Origin = "MenuGeneral";
         if (proba <= Constantes.ProbaModeUrgence)
         {
             int niveau = Rnd.Next(1, 5); // 1 inclus, 5 exclus → donc entre 1 et 4
+            Urgence = true;
             FaireApparaitreCreature(niveau);
-            urgence = true;
             Origin = "MenuUrgence";
             MenuSelectionnee = "MenuUrgence";
             SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
         }
-        return urgence;
     }
     public void ModeUrgenceFin()//REVIENT EN MODE NORMAL
     {
@@ -323,28 +346,39 @@ public class Monde
         }
         if (niveau == 1)
         {
-            CreatureMonde = new CreatureNiveau1("1");
+            CreatureMonde = new CreatureNiveau1(this, "1");
         }
         else if (niveau == 2)
         {
-            CreatureMonde = new CreatureNiveau2("2");
+            CreatureMonde = new CreatureNiveau2(this, "2");
         }
         else if (niveau == 3)
         {
-            CreatureMonde = new CreatureNiveau3("3");
+            CreatureMonde = new CreatureNiveau3(this, "3");
         }
         else if (niveau == 4)
         {
-            CreatureMonde = new CreatureNiveau4("4");
+            CreatureMonde = new CreatureNiveau4(this, "4");
         }
 
         if (Urgence)
         {
-            CreatureMonde.PositionnerSurBord(XTailleGrille, YTailleGrille);
-            ListParcelle[ParcelleSlectionnee].MatricePlantes[CreatureMonde.X, CreatureMonde.Y] = null;
+            CreatureMonde.PositionnerSurBord();
+            CreatureMonde.Manger();
         }
     }
-
+    public void TourModeUrgence()//ENCLENCHE LE TOUR DE LA CREATURE ET LA SUPPRIME SI BESOIN
+    {
+        if (Urgence)
+        {
+            CreatureMonde.TourCreature();
+            if (CreatureMonde.NombreActions == 0)
+            {
+                Thread.Sleep(Constantes.TempsDpt * 3);
+                ModeUrgenceFin();
+            }
+        }
+    }
     //Affichage
     public void ChangerCouleurEtat(int Etat) //CHANGER LA COULEUR DES PLANTES SELON LEUR ETAT
     {
@@ -382,6 +416,14 @@ public class Monde
         Graphique.AfficherDictionnaire(FruitsProduits, Graphique.Palette["Fruit"]);
 
         Console.WriteLine("\n" + ListParcelle[ParcelleSlectionnee].NomParcelle);
+
+        if (Urgence)
+        {
+            Console.ForegroundColor = Graphique.Palette["Creature"];
+            Console.WriteLine("\n Mode URGENCE, creature niveau " + CreatureMonde.Niveau);
+        }
+        else
+            Graphique.SauterNLigne(2);
         for (int yConsole = 0; yConsole < Graphique.YConsole; yConsole++)
         {
             estGrille = true;
@@ -502,6 +544,17 @@ public class Monde
             Console.WriteLine(prix);
             int niveau = NiveauAmelioration() + 1;
         }
+        else if (MenuSelectionnee == "Pieges" && SectionSelectionnee != "Retour")
+        {
+            //bon niveau
+            if (PiegePossibleUtile())
+            {
+                Console.WriteLine("Prix du piege :");
+                Graphique.AfficherDictionnaire(Constantes.PiegeNecessaireConstruction[SectionSelectionnee], Graphique.Palette["Information"]);
+            }
+            else
+                Console.WriteLine("Creature de niveau trop eleve"); ;
+        }
         else
         {
             Console.ForegroundColor = Graphique.Palette["Message"];
@@ -543,13 +596,8 @@ public class Monde
         }
         return emplacementPasPossible;
     }
-    public bool PeutConstruirePlante(string nomPlante)//VERIFIE LES RESSOURCES POUR LA CONSTRUCTION
+    public bool PeutConstruire(Dictionary<string, int> necessaire)//VERIFIE LES RESSOURCES POUR LA CONSTRUCTION
     {
-        if (!Constantes.PlantesNecessaireConstruction.ContainsKey(nomPlante))
-            return false;
-
-        var necessaire = Constantes.PlantesNecessaireConstruction[nomPlante];
-
         foreach (var composant in necessaire)
         {
             string nom = composant.Key;
@@ -725,7 +773,17 @@ public class Monde
         }
     }
 
-
+    //piege
+    public bool PiegePossibleUtile()
+    {
+        bool possible = false;
+        Console.Write(SectionSelectionnee[SectionSelectionnee.Length - 1]);
+        if (PeutConstruire(Constantes.PiegeNecessaireConstruction[SectionSelectionnee]))
+        {
+            possible = true;
+        }
+        return possible;
+    }
     //En cours
     public void ArroserPlante() //ARROSER LA PLANTE SÉLECTIONNÉE
     {
@@ -758,42 +816,3 @@ public class Monde
 
     }
 }
-
-
-
-
-
-
-
-
-/*
-
-BIENVENUE AU POTAGER PRINCIPAL
-
-_____________________    > PLANTES                  > PLANTE 1
-_____________________    > ALLER AU MARCHÉ          > PLANTE 2
-_____________________                               > ETC
-_____________________
-_____________________
-_____________________
-_____________________
-_____________________
-_____________________
-
-
-BIENVENUE AU MARCHÉ
-
-VENDRE                      ACHETER
-> 
-
-
-
-
-ACHETER DES PARCELLES -> ensoleillement, humidité, proba feu, proba innondation, proba invasion sauterelles ou jsp... 
-> POTAGER -> ACQUIS
-> RIVIÈRE -> bcp plus humide, moins de feux
-> DESERT -> bcp de feu, moins d'innondation... 
-
-*/
-
-

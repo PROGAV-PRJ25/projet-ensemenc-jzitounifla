@@ -87,7 +87,7 @@ public static class Constantes
       {"PoMWier", "Arbre fruitier"},
       {"Po1rier","Arbre fruitier"}
     };
-
+  //couts
   public static readonly Dictionary<string, Dictionary<string, int>> PlantesNecessaireConstruction = new Dictionary<string, Dictionary<string, int>> {
       {"Margu-ee-rite", new Dictionary<string, int> {
         {"boulons", 0},
@@ -168,13 +168,32 @@ public static class Constantes
         {"vis", 30}
       }},
       {"Robots-Travailleurs3", new Dictionary<string, int> {
-          {"boulons", 35},
+        {"boulons", 35},
         {"plaque", 20},
         {"tige", 35},
         {"vis", 50}
       }},
+    };
+  public static readonly Dictionary<string, Dictionary<string, int>> PiegeNecessaireConstruction = new Dictionary<string, Dictionary<string, int>> {
+      {"PiegeNiv1", new Dictionary<string, int> {
+        {"boulons", 10},
+        {"plaque", 10},
+        {"tige", 10},
+        {"vis", 10}
+      }},
+      {"PiegeNiv2", new Dictionary<string, int> {
+        {"boulons", 20},
+        {"plaque", 20},
+        {"tige", 15},
+        {"vis", 15}
+      }},
 
-
+      { "PiegeNiv3", new Dictionary<string, int> {
+        {"boulons", 30},
+        {"plaque", 30},
+        {"tige", 30},
+        {"vis", 25}
+      }},
     };
   public static readonly Dictionary<string, int> FruitsGain = new Dictionary<string, int>
         {
@@ -193,6 +212,7 @@ public static class Constantes
         };
   public const double Remboursement = 0.5;
   public const int PackAchat = 10;
-
+  //urgence
   public const double ProbaModeUrgence = 0.4;
+  public const int TempsDpt = 500;
 }
