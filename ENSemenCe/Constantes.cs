@@ -9,7 +9,7 @@ public static class Constantes
         { 8, "Arroser" },
         { 10, "Demonter" },
         { 12, "Ameliorer" },
-        { 14, "Marcher" },
+        { 14, "Marché" },
         { 18, "Retour"},
         { 25, "Passer"},
     }},
@@ -25,7 +25,7 @@ public static class Constantes
           { 8, "ArroserUnePlante" },
           {18, "Retour"}
     }},
-        { "Marcher", new Dictionary<int, string> {
+        { "Marché", new Dictionary<int, string> {
           { 6, "Acheter" },
           { 8, "VendreRecolte" },
           {18, "Retour"}
