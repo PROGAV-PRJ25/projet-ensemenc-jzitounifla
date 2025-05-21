@@ -30,7 +30,7 @@ public class Monde
     public string ButAmelioration { get; set; }
     public bool Passer { get; set; }
     public Dictionary<string, int> FruitsProduits { get; set; }
-    public Monde(int dimX, int dimY)
+    public Monde(int dimX, int dimY) //CONSTRUCTEUR MONDE
     {
         Mois = 0;
         Message = "";
@@ -61,7 +61,7 @@ public class Monde
             { "poires hybrides", 0 }         // Poirier
         };
     }
-    public void InitialisationPlante()
+    public void InitialisationPlante() //ON PLANTE QQUES MARGU-EE-RITES POUR COMMENCER LE JEU
     {
         CaseSelectionnee[1] = 0;
         for (int i = 0; i < XTailleGrille; i += 2)
@@ -72,7 +72,7 @@ public class Monde
         CaseSelectionnee[0] = -1;
         CaseSelectionnee[0] = -1;
     }
-    public void ChangerCouleurEtat(int Etat)
+    public void ChangerCouleurEtat(int Etat) //CHANGER LA COULEUR DES PLANTES SELON LEUR ETAT
     {
         if (Etat == 1)
             Console.ForegroundColor = ConsoleColor.Red;
@@ -81,7 +81,7 @@ public class Monde
         else
             Console.ForegroundColor = ConsoleColor.Green;
     }
-    public void Jouer()
+    public void Jouer() //LA BOUCLE GÉNÉRALE DE JEU !! LÀ QU'À LIEU LE TOUR
     {
         Passer = false;
         Mois = -1;
@@ -100,7 +100,7 @@ public class Monde
         }
 
     }
-    public void PasserTour()
+    public void PasserTour() //PASSER LE TOUR
     {
         //composants
         //faire grandire
@@ -123,7 +123,7 @@ public class Monde
         Graphique.SauterNLigne(2);
 
         Console.ForegroundColor = Graphique.Palette["Mois"];
-        Console.WriteLine(DonneesClimatiques.TousLesMois[Mois]);
+        Console.WriteLine(DonneesClimatiques.TousLesMois[Mois]); //écrit infos sur le climat 
 
 
         Console.ForegroundColor = Graphique.Palette["Composants"];
@@ -239,7 +239,7 @@ public class Monde
             if (niveau < 4)
                 Graphique.AfficherDictionnaire(Constantes.AmeliorationNecessaireConstruction[SectionSelectionnee + niveau], Graphique.Palette["Information"]);
             else
-                Console.Write("Niveau maximul");
+                Console.Write("Niveau maximum");
         }
         else if (MenuSelectionnee == "Acheter" && SectionSelectionnee != "Retour")
         {
@@ -397,7 +397,7 @@ public class Monde
         }
     }
 
-    public void Ameliorer()
+    public void Ameliorer() //POUR AMÉLIORER LE MATÉRIEL D'UNE PARCELLE
     {
         if ((SectionSelectionnee == "Arroseurs") && ListParcelle[ParcelleSlectionnee].NiveauArroseur < 3)
         {
@@ -616,7 +616,7 @@ public class Monde
     }
 
 
-    public void Planter(string type, bool initilisation = false)
+    public void Planter(string type, bool initilisation = false) //PLANTER UNE NOUVELLE PLANTE SUR LA PARCELLE
     {
         if (CaseSelectionneePossible || initilisation)
         {
@@ -655,7 +655,7 @@ public class Monde
         }
     }
 
-    public void ArroserPlante()
+    public void ArroserPlante() //ARROSER LA PLANTE SÉLECTIONNÉE
     {
         var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
         if (plante != null)
@@ -665,14 +665,14 @@ public class Monde
         }
     }
 
-    public void ArroserTout()
+    public void ArroserTout() //ARROSER TOUTES LES PLANTES
     {
         foreach (Parcelle parcelle in ListParcelle)
         {
             parcelle.ArroserParcelle();
         }
     }
-    public void ArroserParcelleSelectionnee()
+    public void ArroserParcelleSelectionnee() //ARROSER LA PARCELLE
     {
         //selectionnerParcelle
         int index = 0;
