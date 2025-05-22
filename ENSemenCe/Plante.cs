@@ -61,12 +61,13 @@ public abstract class Plante
   public double NiveauElectricite { get; set; } //besoin d'assez d'électricité dans l'air pour fonctionner
   public double NiveauUV { get; set; } //besoin d'assez d'UV aussi (ensoleillement)
 
-
+  public int AffichageTour { get; set; }
   //CONSTRUCTEUR
   public Plante(Parcelle parcelle, int x, int y)
   {
     Parcelle = parcelle;
     Coord = [x, y];
+    AffichageTour = 1;
   }
   //pour les différents types de plantes, faire diff matrices qui changent les propriétés de chaque 
   //string pour le nom de la plante, puis tableau pour nécessaire construction
@@ -92,6 +93,7 @@ public abstract class Plante
     NiveauHuile -= DonneesPlantes.PlantesRessources[TypePlante]["huile"] / 100 * (DonneesClimatiques.TousLesMois[mois].TemperatureMoyenne * 0.85); //utilise de l'huile
     NiveauElectricite -= DonneesPlantes.PlantesRessources[TypePlante]["electricite"] / 3; //le niveau d'électricité se fait diviser par 3
     NiveauUV -= DonneesPlantes.PlantesRessources[TypePlante]["UV"] / 3;
+    AffichageTour += 1;
   }
 
   public int[] VerifierEtatSpecifique(string ressource) //Vérifie l'état de la plante quant à une ressource en particulier

@@ -102,9 +102,10 @@ public class Monde
     }
     public void PasserTour() //PASSER LE TOUR
     {
-        //composants
-        //faire grandire
-        //huile
+        foreach (Parcelle parcelle in ListParcelle)
+        {
+            parcelle.ActuliserPousseMortRecolte(Mois, this);
+        }
     }
 
     //Navigation et touches
@@ -471,8 +472,14 @@ public class Monde
                             Graphique.TracerPatternLongueurN(" ", Graphique.XTailleCase);
                         else
                         {
-                            Console.ForegroundColor = Graphique.Palette["EtatPlante" + ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].CalculerEtatGeneral(Mois, ListParcelle[ParcelleSlectionnee])];
-                            Console.Write(Graphique.PlantesDesign[ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].TypePlante][yCase]);
+                            //dessine la plante en fonction de son nombre de tour
+                            if (Graphique.YTailleCase - yCase <= ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].AffichageTour)
+                            {
+                                Console.ForegroundColor = Graphique.Palette["EtatPlante" + ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].CalculerEtatGeneral(Mois, ListParcelle[ParcelleSlectionnee])];
+                                Console.Write(Graphique.PlantesDesign[ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].TypePlante][yCase]);
+                            }
+                            else
+                                Graphique.TracerPatternLongueurN(" ", Graphique.XTailleCase);
                         }
                         //ne faire un espace après la derniere case
                         if (xGrille != XTailleGrille - 1)
@@ -846,11 +853,5 @@ public class Monde
             //Console.WriteLine("Souhaitez-vous utiliser une p")
 
         }
-
-
-    }
-    public void Recolter()
-    {
-
     }
 }

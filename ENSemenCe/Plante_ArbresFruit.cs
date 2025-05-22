@@ -7,11 +7,12 @@ public abstract class ArbreFruit : Plante
     public int NombreFruits { get; set; }
     public string TypeFruits { get; set; }
     public int FrequenceProduction { get; set; }
-
+    public int ProductionTour { get; set; }
     public ArbreFruit(Parcelle parcelle, int x, int y) : base(parcelle, x, y)
     {
         NombreFruits = 0;
         FrequenceProduction = 0;
+        ProductionTour = 0;
     }
 }
 

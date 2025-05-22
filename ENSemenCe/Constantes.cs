@@ -10,7 +10,6 @@ public static class Constantes
         { 10, "Demonter" },
         { 12, "Ameliorer" },
         { 14, "Marché" },
-        { 18, "Retour au menu principal"},
         { 25, "Passer au mois suivant"},
     }},
     { "MenuUrgence", new Dictionary<int, string> {
@@ -20,7 +19,6 @@ public static class Constantes
         { 12, "Ameliorer" },
         { 14, "Marché" },
         { 16, "Pieges" },
-        { 18, "Retour au menu principal"},
         { 25, "PasserAction"},
     }},
       { "Pieges", new Dictionary<int, string> {

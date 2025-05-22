@@ -46,8 +46,6 @@ public class Parcelle
         else NomParcelle = "Parcelle n°" + IndexParcelle + 1 + "- " + NomParcelle; //Nom choisi = "Parcelle n°1 - NomChoisi"
         NbParcelle++;
     }
-
-
     public int ArroserParcelle(int boulonsDispos)
     {
         int lignes = MatricePlantes.GetLength(0);
@@ -98,6 +96,39 @@ public class Parcelle
         {
             Console.WriteLine("Vous n'avez pas assez de boulons pour effectuer cette action.");
             return 0;
+        }
+    }
+    public void ActuliserPousseMortRecolte(int mois, Monde monde)
+    {
+        int lignes = MatricePlantes.GetLength(0);
+        int colonnes = MatricePlantes.GetLength(1);
+        for (int i = 0; i < lignes; i++)
+        {
+            for (int j = 0; j < colonnes; j++)
+            {
+                if (MatricePlantes[i, j] != null) //on vérifie s'il y a une plante à cet endroit là 
+                {
+                    //pousse
+                    MatricePlantes[i, j].Pousser(mois, this);
+                    //recolte
+                    if (MatricePlantes[i, j] is ArbreFruit arbreFruit)
+                    {
+                        // Tu peux maintenant utiliser `arbre` comme un objet ArbreFruit
+                        arbreFruit.ProductionTour += 1;
+                        if (arbreFruit.ProductionTour == arbreFruit.FrequenceProduction)
+                        {
+                            monde.FruitsProduits[arbreFruit.TypeFruits] += arbreFruit.NombreFruits;
+                            arbreFruit.ProductionTour = 0;
+                        }
+                    }
+                    //si la plante est morte
+                    if (MatricePlantes[i, j].CalculerEtatGeneral(mois, this) == 0)
+                    {
+                        MatricePlantes[i, j] = null;
+                    }
+
+                }
+            }
         }
     }
 }
