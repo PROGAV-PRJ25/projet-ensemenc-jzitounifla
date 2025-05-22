@@ -111,7 +111,7 @@ public class Monde
     public void ValiderEntre()//GESTION DES ACTIONS A EXECUTER QUAND ON TAPE ENTREE
     {
         //condition critique
-        if (SectionSelectionnee == "Retour")
+        if (SectionSelectionnee == "Retour au menu principal")
         {
             MenuSelectionnee = Origin;
             SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
@@ -149,7 +149,7 @@ public class Monde
                 TourModeUrgence();
             }
         }
-        else if (SectionSelectionnee == "Passer")
+        else if (SectionSelectionnee == "Passer au mois suivant")
         {
             Passer = true;
         }
@@ -508,7 +508,7 @@ public class Monde
     public void AffichageInformation()//AFFICHE LES AUTRES INFORMATIONS SELON LE MENU
     {
         Console.ForegroundColor = Graphique.Palette["Information"];
-        if (MenuSelectionnee == "Planter" && SectionSelectionnee != "Retour")
+        if (MenuSelectionnee == "Planter" && SectionSelectionnee != "Retour au menu principal")
         {
             Console.Write("Prix ");
             Graphique.AfficherDictionnaire(Constantes.PlantesNecessaireConstruction[SectionSelectionnee], Graphique.Palette["Information"]);
@@ -529,7 +529,7 @@ public class Monde
             string TypePlantePotentiellementDetruite = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].TypePlante;
             Graphique.AfficherDictionnaire(CalculerRemboursementConstruction(Constantes.PlantesNecessaireConstruction[TypePlantePotentiellementDetruite]), Graphique.Palette["Information"]);
         }
-        else if (MenuSelectionnee == "Ameliorer" && SectionSelectionnee != "Retour")
+        else if (MenuSelectionnee == "Ameliorer" && SectionSelectionnee != "Retour au menu principal")
         {
             Console.Write("Prix " + ButAmelioration);
             int niveau = NiveauAmelioration() + 1;
@@ -538,14 +538,14 @@ public class Monde
             else
                 Console.Write("   Niveau maximum");
         }
-        else if (MenuSelectionnee == "Acheter" && SectionSelectionnee != "Retour")
+        else if (MenuSelectionnee == "Acheter" && SectionSelectionnee != "Retour au menu principal")
         {
             int prix = Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee];
             Console.WriteLine("Prix en boulons pour un pack de " + Constantes.PackAchat);
             Console.WriteLine(prix);
             int niveau = NiveauAmelioration() + 1;
         }
-        else if (MenuSelectionnee == "Pieges" && SectionSelectionnee != "Retour")
+        else if (MenuSelectionnee == "Pieges" && SectionSelectionnee != "Retour au menu principal")
         {
             bool possible = false;
             char niveauPiegeSelectionne = SectionSelectionnee[SectionSelectionnee.Length - 1];
@@ -840,6 +840,13 @@ public class Monde
     }
     public void EclairerPlante()
     {
+        var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
+        if (plante != null)
+        {
+            //Console.WriteLine("Souhaitez-vous utiliser une p")
+
+        }
+
 
     }
     public void Recolter()

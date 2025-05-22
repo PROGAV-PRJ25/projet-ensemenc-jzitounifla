@@ -10,8 +10,8 @@ public static class Constantes
         { 10, "Demonter" },
         { 12, "Ameliorer" },
         { 14, "Marché" },
-        { 18, "Retour"},
-        { 25, "Passer"},
+        { 18, "Retour au menu principal"},
+        { 25, "Passer au mois suivant"},
     }},
     { "MenuUrgence", new Dictionary<int, string> {
         { 6, "Planter" },
@@ -20,7 +20,7 @@ public static class Constantes
         { 12, "Ameliorer" },
         { 14, "Marché" },
         { 16, "Pieges" },
-        { 18, "Retour"},
+        { 18, "Retour au menu principal"},
         { 25, "PasserAction"},
     }},
       { "Pieges", new Dictionary<int, string> {
@@ -28,30 +28,30 @@ public static class Constantes
         { 8, "PiegeNiv2" },
         { 10, "PiegeNiv3" },
         { 12, "PiegeNiv4" },
-        { 18, "Retour"},
+        { 18, "Retour au menu principal"},
     }},
        { "Ameliorer", new Dictionary<int, string> {
         { 6, "Arroseurs" },
         { 8, "Clotures" },
         { 10, "Palissades" },
         { 12, "Robots-Travailleurs" },
-        { 18, "Retour"},
+        { 18, "Retour au menu principal"},
     }},
         { "Arroser", new Dictionary<int, string> {
           { 6, "ArrosageAutomatique" },
           { 8, "ArroserUnePlante" },
-          {18, "Retour"}
+          {18, "Retour au menu principal"}
     }},
         { "Marché", new Dictionary<int, string> {
           { 6, "Acheter" },
           { 8, "VendreRecolte" },
-          {18, "Retour"}
+          {18, "Retour au menu principal"}
     }},
        { "Acheter", new Dictionary<int, string> {
           { 6, "plaque" },
           { 8, "tige" },
           { 10, "vis" },
-          { 18, "Retour"}
+          { 18, "Retour au menu principal"}
     }},
      { "Planter", new Dictionary<int, string> {
         { 6, "Margu-ee-rite" },
@@ -59,7 +59,7 @@ public static class Constantes
         { 10, "LierR3"},
         {12, "PoMWier"},
         {14, "Po1rier"},
-        {18, "Retour"}
+        {18, "Retour au menu principal"}
     }}};
 
   //TYPES DE PLANTES : 
@@ -218,11 +218,12 @@ public static class Constantes
             { "tige", 2 },
             { "vis", 2 },
             {"litreHuile", 5},
+            {"lampeUsageUnique", 10},
         };
 
   public const double Remboursement = 0.5;
   public const int PackAchat = 10;
   //urgence
-  public const double ProbaModeUrgence = 0.4;
+  public const double ProbaModeUrgence = 0.2;
   public const int TempsDpt = 500;
 }
