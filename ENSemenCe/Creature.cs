@@ -2,8 +2,8 @@ public class Creature
 {
     public string Nom { get; set; }
     public int Niveau { get; set; }
-    public int NombreActions { get; set; }
-    public int NombreDpt { get; set; }
+    public int NombreActions { get; set; }//Nombre d actions restantes
+    public int NombreDpt { get; set; }//Nombre de deplacemnt
     public string[] Design { get; set; }
 
     public Monde MondeCreature { get; set; }
@@ -20,7 +20,7 @@ public class Creature
         MondeCreature = monde;
     }
 
-    public void PositionnerSurBord()
+    public void PositionnerSurBord()//PLACE LA CREATURE SUR UN BORD DE MANIERE ALEATOIRE
     {
         Random rnd = new();
         int bord = rnd.Next(4); // 0=haut, 1=bas, 2=gauche, 3=droite
@@ -50,7 +50,7 @@ public class Creature
     {
         MondeCreature.ListParcelle[MondeCreature.ParcelleSlectionnee].MatricePlantes[X, Y] = null;
     }
-    public void DeplacerAleatoirement()
+    public void DeplacerAleatoirement()//DEPLACE LA CREATURE DE MANIERE ALEATOIRE
     {
         Random rnd = new();
 
@@ -83,7 +83,7 @@ public class Creature
             }
         }
     }
-    public void TourCreature()
+    public void TourCreature()//DEPLACE LA CREATURE ET SUPPRIME LA PLANTE EN FONCTION DU NOMBRE DE DEPLACEMENT
     {
         for (int i = 0; i < NombreDpt; i++)
         {

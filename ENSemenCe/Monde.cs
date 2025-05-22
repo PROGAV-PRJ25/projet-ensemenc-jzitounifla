@@ -22,36 +22,47 @@ public class Monde
     public List<Parcelle> ListParcelle { get; set; }
 
     //selection
-    public int[] CaseSelectionnee = [-1, -1];
-    public bool CaseSelectionneePossible = false;
+    public int[] CaseSelectionnee = [-1, -1];//Curseur
+    public bool CaseSelectionneePossible = false;//action possible selon l emplacement du curseur
+
+    //urgence
+    public Creature CreatureMonde { get; set; }
+    public string Origin { get; set; }//menu de retour : change selon le mode (menuGeneral ou menuUrgence)
+    public bool Urgence { get; set; }
 
     //autre
     public string Message { get; set; }
     public string Information { get; set; }
     public string ButAmelioration { get; set; }
-    public bool Passer { get; set; }
+    public bool Passer { get; set; }//variable pour passer un tour
     public Dictionary<string, int> FruitsProduits { get; set; }
-    //urgence
-    public Creature CreatureMonde { get; set; }
-    public string Origin { get; set; }
-    public bool Urgence { get; set; }
     Random Rnd = new Random();
     public Monde(int dimX, int dimY, int coefficientPieceDepart = 5) //CONSTRUCTEUR MONDE
     {
-        CreatureMonde = null;
-        Mois = 0;
-        Message = "";
-        Information = "";
-        MenuSelectionnee = "MenuGeneral";
-        SectionSelectionnee = "Planter";
-        ButAmelioration = "Economise de l'huile lors de l'arrosage";
-        TypePlanteSelectionne = Constantes.Menus["Planter"].Values.First();
-        ParcelleSlectionnee = 0;
+        //taille de la grille
         XTailleGrille = dimX;
         YTailleGrille = dimY;
+
+        //menu de depart
+        MenuSelectionnee = "MenuGeneral";
+        SectionSelectionnee = "Planter";
+        TypePlanteSelectionne = Constantes.Menus["Planter"].Values.First();
+
+        //parcelle et mois de depart
         ListParcelle = [new Parcelle(XTailleGrille, YTailleGrille, "Potager")];
-        Graphique.YConsole = dimY * Graphique.YTailleCase + Graphique.YGrilleStart + 10;
+        ParcelleSlectionnee = 0;
+        Mois = 0;
         InitialisationPlante();
+
+        //creature
+        CreatureMonde = null;
+
+        //label
+        Message = "";
+        Information = "";
+        ButAmelioration = "Economise de l'huile lors de l'arrosage";
+
+        //initialisation des composants et fruits
         Composants = new Dictionary<string, int>
         {
             {"boulons", 10*coefficientPieceDepart},
@@ -67,6 +78,17 @@ public class Monde
             { "pomwies", 0 },                // PoMWier
             { "poires hybrides", 0 }         // Poirier
         };
+
+        //ecran affichage : hauteur sans les informations du haut et du bas
+        Graphique.YConsole = dimY * Graphique.YTailleCase + Graphique.YGrilleStart + 10;
+        FruitsProduits = new Dictionary<string, int>
+        {
+            { "graines lumineuses", 0 },     // Marguerite
+            { "pétales d'acier", 0 },        // Robose
+            { "gousses grimpantes", 0 },     // Lierre
+            { "pomwies", 0 },                // PoMWier
+            { "poires hybrides", 0 }         // Poirier
+        };
     }
     public void InitialisationPlante() //ON PLANTE QQUES MARGU-EE-RITES POUR COMMENCER LE JEU
     {
@@ -74,7 +96,7 @@ public class Monde
         for (int i = 0; i < XTailleGrille; i += 2)
         {
             CaseSelectionnee[0] = i;
-            Planter("Margu-ee-rite", true);
+            Planter("Margu-ee-rite", true);//Plante a l emplacement du curseur
         }
         CaseSelectionnee[0] = -1;
         CaseSelectionnee[0] = -1;
@@ -100,7 +122,7 @@ public class Monde
             PasserTour();
         }
     }
-    public void PasserTour() //PASSER LE TOUR
+    public void PasserTour() //PASSER LE TOUR : ACTUALISE CHAQUE PLANTE DE CHAQUE PARCELLE
     {
         foreach (Parcelle parcelle in ListParcelle)
         {
@@ -109,7 +131,7 @@ public class Monde
     }
 
     //Navigation et touches
-    public void ValiderEntre()//GESTION DES ACTIONS A EXECUTER QUAND ON TAPE ENTREE
+    public void ValiderEntre()//GESTION DES ACTIONS A EXECUTER QUAND ON TAPE ENTREE (Sauf pour la selection des cases)
     {
         //condition critique
         if (SectionSelectionnee == "Retour au menu principal")
@@ -117,10 +139,12 @@ public class Monde
             MenuSelectionnee = Origin;
             SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
         }
+        //chaque action valide declenche un tour de la creature en mode urgence => TourModeUrgence
         else if (MenuSelectionnee == "Planter")
         {
 
             TypePlanteSelectionne = SectionSelectionnee;
+            //si on peut constuire la plante
             if (PeutConstruire(Constantes.PlantesNecessaireConstruction[TypePlanteSelectionne]))
             {
                 SelectionCase();
@@ -133,6 +157,7 @@ public class Monde
         }
         else if (MenuSelectionnee == "Acheter")
         {
+            //si on peut acheter les composants
             if (Composants["boulons"] >= Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee])
             {
                 Acheter();
@@ -145,6 +170,7 @@ public class Monde
         }
         else if (MenuSelectionnee == "Ameliorer")
         {
+            //si on a assez pour ameliorer et que le niveau n est pas maximum
             if (Ameliorer())
             {
                 TourModeUrgence();
@@ -165,7 +191,7 @@ public class Monde
         }
         else if (MenuSelectionnee == "Pieges")
         {
-            if (PiegePossibleUtile())
+            if (PiegePossibleUtile())//si niveau du piege insuffisant ou pas assez de composants
             {
                 SelectionCase();
             }
@@ -176,10 +202,12 @@ public class Monde
         }
         else if (SectionSelectionnee == "ArrosageAutomatique")
         {
+            //RAJOUTER UNE CONDITION SI POSSIBLE
             ArroserParcelleSelectionnee();
         }
         else
         {
+            //Change de menu
             MenuSelectionnee = SectionSelectionnee;
             SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
         }
@@ -205,7 +233,6 @@ public class Monde
                 ValiderEntre();
                 break;
         }
-        // Tu peux faire d'autres trucs ici avec la variable `a`
     }
     public void PrendreSectionSuivantePrecedente(bool suivante)//RETOURNE LE PROCHAIN MENU
     {
@@ -232,15 +259,18 @@ public class Monde
         CaseSelectionneePossible = false;
         do
         {
+            //endroit ou l on peut pas planter
             bool[,] emplacementPasPossible = VerifierPlanter();
+            //actualise l etat du curseur en fonction de l action
             ActionPossible(emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]]);
             Affichage();
+            //recuperer touche
             Console.ForegroundColor = Graphique.Palette["Message"];
             Console.WriteLine(consigne);
             ConsoleKeyInfo touche = Console.ReadKey(true);
             switch (touche.Key)
             {
-                //Up et Down se déplacer
+                //Up et Down deplace coordonner du curseur
                 case ConsoleKey.UpArrow:
                     CaseSelectionnee = CoordCase(CaseSelectionnee[0], CaseSelectionnee[1], 0, -1);
                     break;
@@ -270,14 +300,13 @@ public class Monde
                         }
                         else if (SectionSelectionnee == "ArroserUnePlante")
                         {
-                            //ArroserPlante(Mois);
+                            ArroserPlante(Mois);
                         }
                         else if (MenuSelectionnee == "Pieges")
                         {
                             PayerConstruction(Constantes.PiegeNecessaireConstruction[SectionSelectionnee]);
-                            ModeUrgenceFin();
+                            ModeUrgenceFin();//Creature piege, fin du mode urgence
                         }
-                        valider = true;
                         valider = true;
                     }
                     break;
@@ -289,15 +318,16 @@ public class Monde
             ActionPossible(emplacementPasPossible[CaseSelectionnee[0], CaseSelectionnee[1]]);
 
         } while (!annuler && !valider);
-        CaseSelectionnee = [-1, -1];
+        CaseSelectionnee = [-1, -1];//retire le curseur
         if (valider)
-            TourModeUrgence();
+            TourModeUrgence();//chaque action valide declenche un tour de la creature en mode urgence => TourModeUrgence
         Affichage();
     }
     public void ActionPossible(bool emplacementPasPossible)//ACTUALISE L ETAT DE L ACTION SELON L EMPLACEMENT DU CURSEUR ET L ACTION EN COURS
     {
         if (MenuSelectionnee == "Planter")
         {
+            //si les espacements sont respecte
             if (emplacementPasPossible)
                 CaseSelectionneePossible = false;
             else
@@ -305,6 +335,7 @@ public class Monde
         }
         else if (SectionSelectionnee == "Demonter" || SectionSelectionnee == "ArroserUnePlante")
         {
+            //si le curseur est sur une plante
             if (ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] != null)
                 CaseSelectionneePossible = true;
             else
@@ -312,6 +343,7 @@ public class Monde
         }
         else if (MenuSelectionnee == "Pieges")
         {
+            //si le curseur est sur la creature
             if (CreatureMonde.X == CaseSelectionnee[0] && CreatureMonde.Y == CaseSelectionnee[1])
                 CaseSelectionneePossible = true;
             else
@@ -321,6 +353,7 @@ public class Monde
     public int[] CoordCase(int xActu, int yActu, int xTranslation, int yTranslation)//ACTUALISE LA POSITION DU CURSEUR
     {
         int[] coord = [xActu, yActu];
+        //verifie si on tente pas de se deplacer en dehors de la grille
         if ((xActu + xTranslation >= 0) && (yActu + yTranslation >= 0) && (xActu + xTranslation < XTailleGrille) && (yActu + yTranslation < YTailleGrille))
             coord = [xActu + xTranslation, yActu + yTranslation];
         return coord;
@@ -335,8 +368,8 @@ public class Monde
         {
             int niveau = Rnd.Next(1, 5); // 1 inclus, 5 exclus → donc entre 1 et 4
             Urgence = true;
-            FaireApparaitreCreature(niveau);
-            if (Urgence)
+            FaireApparaitreCreature(niveau);//pioche une creature et la place sur la grille si le niveau de la cloture est insuffisant
+            if (Urgence)//si la creature a passe la cloture
             {
                 Origin = "MenuUrgence";
                 MenuSelectionnee = "MenuUrgence";
@@ -350,12 +383,14 @@ public class Monde
     {
         Urgence = false;
         CreatureMonde = null;
+        //revient au menu normal
         Origin = "MenuGeneral";
         MenuSelectionnee = "MenuGeneral";
         SectionSelectionnee = Constantes.Menus[MenuSelectionnee].Values.First();
     }
-    public void FaireApparaitreCreature(int niveau)//CREATURE 
+    public void FaireApparaitreCreature(int niveau)//CREER LA CREATURE SI LE NIVEAU DE LA CLOTURE EST INSUFFISANT
     {
+        //la creature ne passe pas la cloture
         if (ListParcelle[ParcelleSlectionnee].NiveauCloture > niveau)
         {
             Urgence = false;
@@ -376,9 +411,9 @@ public class Monde
         {
             CreatureMonde = new CreatureNiveau4(this, "4");
         }
-
         if (Urgence)
         {
+            //initialise la creature
             CreatureMonde.PositionnerSurBord();
             CreatureMonde.Manger();
         }
@@ -387,8 +422,9 @@ public class Monde
     {
         if (Urgence)
         {
+            //bouge la creature
             CreatureMonde.TourCreature();
-            if (CreatureMonde.NombreActions == 0)
+            if (CreatureMonde.NombreActions == 0)//si la creature n a plus d action fin du mode urgence
             {
                 Thread.Sleep(Constantes.TempsDpt * 3);
                 ModeUrgenceFin();
@@ -396,34 +432,34 @@ public class Monde
         }
     }
     //Affichage
-    public void Affichage()//AFFICHE LA PARTIE PRINCIPAL DU JEU
+    public void Affichage()//AFFICHE TOUT LE JEU
     {
-        //coordonnees absolue
-        int YTailleGrilleCaractere = (Graphique.YInterCase + Graphique.YTailleCase) * YTailleGrille + 1;
-        int XTailleGrilleCaractere = (Graphique.XInterCase + Graphique.XTailleCase) * XTailleGrille + 1;
-
-        //parcours
-        int yCase = 0;
-        int yGrille = 0;
-        int ligneArroseur = 0;
-        bool estGrille = true;
-
+        //taille de la grille en caracteres
+        int yTailleGrilleCaractere = (Graphique.YInterCase + Graphique.YTailleCase) * YTailleGrille + 1;
+        int xTailleGrilleCaractere = (Graphique.XInterCase + Graphique.XTailleCase) * XTailleGrille + 1;
+        AffichageHaut(xTailleGrilleCaractere, yTailleGrilleCaractere);
+        AffichageGrille(xTailleGrilleCaractere, yTailleGrilleCaractere);
+        AffichageBas();
+    }
+    public void AffichageHaut(int xTailleGrilleCaractere, int yTailleGrilleCaractere)//AFFICHE TOUTES LES INFORMATIONS AU DESSUS DE LA GRILLE
+    {
+        //titre
         Console.Clear();
-        Graphique.TracerTitreEncadre(Graphique.Titre, XTailleGrilleCaractere);
+        Graphique.TracerTitreEncadre(Graphique.Titre, xTailleGrilleCaractere);
         Graphique.SauterNLigne(2);
-
+        //mois
         Console.ForegroundColor = Graphique.Palette["Mois"];
         Console.WriteLine(DonneesClimatiques.TousLesMois[Mois]); //écrit infos sur le climat 
-
-
+        //composants
         Console.ForegroundColor = Graphique.Palette["Composants"];
         Graphique.AfficherDictionnaire(Composants, Graphique.Palette["Composants"]);
         Console.WriteLine("");
+        //fruits
         Console.ForegroundColor = Graphique.Palette["Fruit"];
         Graphique.AfficherDictionnaire(FruitsProduits, Graphique.Palette["Fruit"]);
-
+        //parcelle
         Console.WriteLine("\n" + ListParcelle[ParcelleSlectionnee].NomParcelle);
-
+        //mode urgence
         if (Urgence)
         {
             Console.ForegroundColor = Graphique.Palette["Creature"];
@@ -431,6 +467,16 @@ public class Monde
         }
         else
             Graphique.SauterNLigne(2);
+    }
+    public void AffichageGrille(int xTailleGrilleCaractere, int yTailleGrilleCaractere)//AFFICHE LA PARTIE PRINCIPAL DU JEU
+    {
+        //parcours dans une case
+        int yCase = 0;
+        //coordonnee absolue en caractere selon y
+        int yGrille = 0;
+        //parcours
+        int ligneArroseur = 0;
+        bool estGrille = true;
         for (int yConsole = 0; yConsole < Graphique.YConsole; yConsole++)
         {
             estGrille = true;
@@ -438,12 +484,12 @@ public class Monde
             Graphique.TracerPatternLongueurN(" ", Graphique.MargeGauche);
             //haut du cadre
             if (yConsole == Graphique.YGrilleStart)
-                Graphique.TracerClotureHautBas(ListParcelle[ParcelleSlectionnee].NiveauCloture, XTailleGrilleCaractere, "Haut");
+                Graphique.TracerClotureHautBas(ListParcelle[ParcelleSlectionnee].NiveauCloture, xTailleGrilleCaractere, "Haut");
             //base du cadre
-            else if (yConsole == Graphique.YGrilleStart - 1 + YTailleGrilleCaractere)
-                Graphique.TracerClotureHautBas(ListParcelle[ParcelleSlectionnee].NiveauCloture, XTailleGrilleCaractere, "Bas");
+            else if (yConsole == Graphique.YGrilleStart - 1 + yTailleGrilleCaractere)
+                Graphique.TracerClotureHautBas(ListParcelle[ParcelleSlectionnee].NiveauCloture, xTailleGrilleCaractere, "Bas");
             //grille
-            else if (Graphique.YGrilleStart < yConsole && yConsole < Graphique.YGrilleStart - 1 + YTailleGrilleCaractere)
+            else if (Graphique.YGrilleStart < yConsole && yConsole < Graphique.YGrilleStart - 1 + yTailleGrilleCaractere)
             {
                 Graphique.TracerClotureCote(ListParcelle[ParcelleSlectionnee].NiveauCloture, yConsole);
                 //interCase
@@ -452,10 +498,10 @@ public class Monde
                     ligneArroseur++;
                     if (ligneArroseur % Graphique.ArroseurFrequenceY[ListParcelle[ParcelleSlectionnee].NiveauArroseur] == 0)
                     {
-                        Graphique.TracerInterligneAroseur(arroseur: true, ListParcelle[ParcelleSlectionnee].NiveauArroseur, ListParcelle[ParcelleSlectionnee].NiveauPalissade, longueurTotal: XTailleGrilleCaractere - 2);
+                        Graphique.TracerInterligneAroseur(arroseur: true, ListParcelle[ParcelleSlectionnee].NiveauArroseur, ListParcelle[ParcelleSlectionnee].NiveauPalissade, longueurTotal: xTailleGrilleCaractere - 2);
                     }
                     else
-                        Graphique.TracerInterligneAroseur(arroseur: false, ListParcelle[ParcelleSlectionnee].NiveauArroseur, ListParcelle[ParcelleSlectionnee].NiveauPalissade, longueurTotal: XTailleGrilleCaractere - 2);
+                        Graphique.TracerInterligneAroseur(arroseur: false, ListParcelle[ParcelleSlectionnee].NiveauArroseur, ListParcelle[ParcelleSlectionnee].NiveauPalissade, longueurTotal: xTailleGrilleCaractere - 2);
                     yGrille++;
                 }
                 //case
@@ -471,11 +517,13 @@ public class Monde
                                 couleur = Graphique.Palette["CurseurOui"];
                             Graphique.TracerPatternLongueurN("█", Graphique.XTailleCase, couleur);
                         }
+                        //creature
                         else if (CreatureMonde != null && CreatureMonde.X == xGrille && CreatureMonde.Y == yGrille)
                         {
                             Console.ForegroundColor = Graphique.Palette["Creature"];
                             Console.Write(CreatureMonde.Design[yCase]);
                         }
+                        //case vide
                         else if (ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille] == null)
                             Graphique.TracerPatternLongueurN(" ", Graphique.XTailleCase);
                         else
@@ -486,6 +534,7 @@ public class Monde
                                 Console.ForegroundColor = Graphique.Palette["EtatPlante" + ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].Etat];
                                 Console.Write(Graphique.PlantesDesign[ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].TypePlante][yCase]);
                             }
+                            //la plante n est pas assez grande
                             else
                                 Graphique.TracerPatternLongueurN(" ", Graphique.XTailleCase);
                         }
@@ -500,11 +549,14 @@ public class Monde
             }
             else
                 estGrille = false;
+            //trace le menu sur le cote
             if (Constantes.Menus[MenuSelectionnee].ContainsKey(yConsole))
             {
+                //conserve l alignement meme si le menu depasse de la grille
                 if (!estGrille)
-                    Graphique.TracerPatternLongueurN(" ", XTailleGrilleCaractere);
+                    Graphique.TracerPatternLongueurN(" ", xTailleGrilleCaractere);
                 Graphique.TracerPatternLongueurN(" ", Graphique.MargeAvantMenu);
+                //si c est la section selectionnnee la mettre en bleu
                 if (Constantes.Menus[MenuSelectionnee][yConsole] == SectionSelectionnee)
                 {
                     Console.BackgroundColor = ConsoleColor.Blue;
@@ -517,10 +569,10 @@ public class Monde
             }
             Console.WriteLine("");
         }
+        //dessine le robot
         Graphique.AfficherRobot(ListParcelle[ParcelleSlectionnee].NiveauRobots);
-        AffichageInformation();
     }
-    public void AffichageInformation()//AFFICHE LES AUTRES INFORMATIONS SELON LE MENU
+    public void AffichageBas()//AFFICHE LES AUTRES INFORMATIONS SELON LE MENU
     {
         Console.ForegroundColor = Graphique.Palette["Information"];
         if (MenuSelectionnee == "Planter" && SectionSelectionnee != "Retour au menu principal")
@@ -528,6 +580,7 @@ public class Monde
             Console.Write("Prix ");
             Graphique.AfficherDictionnaire(Constantes.PlantesNecessaireConstruction[SectionSelectionnee], Graphique.Palette["Information"]);
             Console.WriteLine("");
+            //affiche les informations de la plante
             var info = ArbreFruitRegistry.Infos[SectionSelectionnee];
             Console.WriteLine($"{info.Nom} produit {info.NombreFruits} {info.TypeFruits} tous les {info.FrequenceProduction} cycles. A besoin {info.EspacementNecessaire} espace vide autour");
             Console.WriteLine(Constantes.PlantesDescription[SectionSelectionnee]);
@@ -536,18 +589,14 @@ public class Monde
         {
             Console.Write("Recuperer");
             string TypePlantePotentiellementDetruite = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].TypePlante;
-            Graphique.AfficherDictionnaire(CalculerRemboursementConstruction(Constantes.PlantesNecessaireConstruction[TypePlantePotentiellementDetruite]), Graphique.Palette["Information"]);
-        }
-        else if (SectionSelectionnee == "Demonter" && CaseSelectionneePossible && CaseSelectionnee[0] != -1 && CaseSelectionnee[1] != -1)
-        {
-            Console.Write("Recuperer");
-            string TypePlantePotentiellementDetruite = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].TypePlante;
+            //affiche le remboursement selon la plante
             Graphique.AfficherDictionnaire(CalculerRemboursementConstruction(Constantes.PlantesNecessaireConstruction[TypePlantePotentiellementDetruite]), Graphique.Palette["Information"]);
         }
         else if (MenuSelectionnee == "Ameliorer" && SectionSelectionnee != "Retour au menu principal")
         {
             Console.Write("Prix " + ButAmelioration);
             int niveau = NiveauAmelioration() + 1;
+            //affiche cout de l amelioration si pas au niveau max
             if (niveau < 4)
                 Graphique.AfficherDictionnaire(Constantes.AmeliorationNecessaireConstruction[SectionSelectionnee + niveau], Graphique.Palette["Information"]);
             else
@@ -555,26 +604,26 @@ public class Monde
         }
         else if (MenuSelectionnee == "Acheter" && SectionSelectionnee != "Retour au menu principal")
         {
+            //affiche prix du composant
             int prix = Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee];
             Console.WriteLine("Prix en boulons pour un pack de " + Constantes.PackAchat);
             Console.WriteLine(prix);
-            int niveau = NiveauAmelioration() + 1;
         }
         else if (MenuSelectionnee == "Pieges" && SectionSelectionnee != "Retour au menu principal")
         {
             bool possible = false;
             char niveauPiegeSelectionne = SectionSelectionnee[SectionSelectionnee.Length - 1];
             int niveauPiegeSelectionneInt = int.Parse(niveauPiegeSelectionne.ToString());
-            //bon niveau
+            //si le niveau du piege est suffisant pour la creature
             if (CreatureMonde.Niveau <= niveauPiegeSelectionneInt)
             {
-
                 Console.WriteLine("Prix du piege :");
                 Graphique.AfficherDictionnaire(Constantes.PiegeNecessaireConstruction[SectionSelectionnee], Graphique.Palette["Information"]);
             }
             else
                 Console.WriteLine("Creature de niveau trop eleve"); ;
         }
+        //autre
         else
         {
             Console.ForegroundColor = Graphique.Palette["Message"];
@@ -635,7 +684,7 @@ public class Monde
         {
             string nom = composant.Key;
             int quantiteRequise = composant.Value;
-
+            //si il manque des composants ou que le composant n existe pas
             if (!Composants.ContainsKey(nom) || Composants[nom] < quantiteRequise)
             {
                 return false;
@@ -691,13 +740,13 @@ public class Monde
             string nom = composant.Key;
             int quantite = composant.Value;
 
-            // Décrémente les composants utilisés
+            // retire les composants utilisés
             Composants[nom] -= quantite;
         }
     }
 
     //demonter
-    public void DemonterPlante()//SUPPRIME PLANTE
+    public void DemonterPlante()//SUPPRIME PLANTE ET REMBOURSE
     {
         var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
         if (plante != null)
@@ -716,7 +765,7 @@ public class Monde
             string nom = composant.Key;
             int quantite = (int)Math.Round(composant.Value * Constantes.Remboursement);
 
-            // Décrémente les composants utilisés
+            // Retire les composants utilisés
             Composants[nom] += quantite;
         }
     }
@@ -727,7 +776,7 @@ public class Monde
         foreach (var composant in necessaire)
         {
             string nom = composant.Key;
-            int quantite = (int)Math.Round(composant.Value * Constantes.Remboursement); // ou Floor/Ceiling selon la logique
+            int quantite = (int)Math.Round(composant.Value * Constantes.Remboursement);
 
             remboursement[nom] = quantite;
         }
@@ -760,6 +809,7 @@ public class Monde
     public bool Ameliorer() //POUR AMÉLIORER LE MATÉRIEL D'UNE PARCELLE
     {
         bool amelioration = false;
+        //verifie le materiel selectionne et si celui-ci n est pas au maximum l'ameliore
         if ((SectionSelectionnee == "Arroseurs") && ListParcelle[ParcelleSlectionnee].NiveauArroseur < 3)
         {
             ListParcelle[ParcelleSlectionnee].NiveauArroseur += 1;
@@ -817,7 +867,7 @@ public class Monde
         bool possible = false;
         char niveauPiegeSelectionne = SectionSelectionnee[SectionSelectionnee.Length - 1];
         int niveauPiegeSelectionneInt = int.Parse(niveauPiegeSelectionne.ToString());
-
+        //si on a assez de composants pour le piege et que le piege est de niveau suffisant contre la creature
         if ((CreatureMonde.Niveau <= niveauPiegeSelectionneInt) && PeutConstruire(Constantes.PiegeNecessaireConstruction[SectionSelectionnee]))
         {
             possible = true;
