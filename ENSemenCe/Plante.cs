@@ -98,55 +98,39 @@ public abstract class Plante
     AffichageTour += 1;
   }
 
-  public int[] VerifierEtatSpecifique(string ressource) //Vérifie l'état de la plante quant à une ressource en particulier
+  public int[] VerifierEtatSpecifique(string ressource)
   {
-    int niveau = 1; //UNE NOTE SUR 3 -> SIMILAIRE À CELLE REPRÉSENTANT L'ÉTAT EN GÉNÉRAL
-    double detail = 51; //POURCENTAGE PAR RAPPORT À VALEUR IDEALE ATTENDUE
+    int niveau = 1;
+    double detail = 0;
+
+    double valeurActuelle = 0;
+    double valeurIdeale = DonneesPlantes.PlantesRessources[TypePlante][ressource];
 
     switch (ressource)
     {
       case "huile":
-
-        //si on est à ±20% du niveau d'huile requis
-        if (NiveauHuile > DonneesPlantes.PlantesRessources[TypePlante]["huile"] - (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauHuile < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-        {
-          //si on est dans les 10% 
-          if (NiveauHuile > DonneesPlantes.PlantesRessources[TypePlante]["huile"] - (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauHuile < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-            niveau = 3;
-          else niveau = 2;
-        }
-        detail = NiveauHuile / DonneesPlantes.PlantesRessources[TypePlante]["huile"] * 100;
+        valeurActuelle = NiveauHuile;
         break;
-
       case "electricite":
-        if (NiveauElectricite > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauElectricite < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-        {
-          //si on est dans les 10% 
-          if (NiveauElectricite > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauElectricite < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-            niveau = 3;
-          else niveau = 2;
-        }
-        detail = NiveauElectricite / DonneesPlantes.PlantesRessources[TypePlante]["electricite"] * 100;
-
+        valeurActuelle = NiveauElectricite;
         break;
-
       case "UV":
-        if (NiveauUV > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.5 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauUV < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.5 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-        {
-          //si on est dans les 20% 
-          if (NiveauUV > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauUV < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-            niveau = 3;
-          else niveau = 2;
-        }
-        detail = NiveauUV / DonneesPlantes.PlantesRessources[TypePlante]["UV"] * 100;
+        valeurActuelle = NiveauUV;
         break;
       default:
-        Console.WriteLine("Erreur de calcul de l'état de la plante : la valeur entrée ne correspondait pas à un état spécifique. Assurez-vous que l'état soit soit 'huile', soit 'electricite', soit 'UV'. ");
-        break;
+        Console.WriteLine("Ressource invalide.");
+        return new int[] { 0, 0 };
     }
 
-    return [niveau, Convert.ToInt16(detail)]; //RENVOIE UNE MATRICE AVEC LE NIVEAU ET LE POURCENTAGE
+    if (valeurActuelle > valeurIdeale * 0.8 && valeurActuelle < valeurIdeale * 1.2)
+    {
+      niveau = (valeurActuelle > valeurIdeale * 0.9 && valeurActuelle < valeurIdeale * 1.1) ? 3 : 2;
+    }
+
+    detail = (valeurActuelle / valeurIdeale) * 100;
+    return new int[] { niveau, Convert.ToInt32(detail) };
   }
+
 
   public void CalculerEtatGeneral(int mois, Parcelle parcelle) //Calculer l'état de la plante selon la météo du mois et la parcelle où elle est plantée
   /*
@@ -158,27 +142,31 @@ public abstract class Plante
   */
   {
     //Etat en fonction de la duree de vie : fragilité de la plante augmente plus elle est jeune ou plus elle est vieille. 
-    double fragilite = 0; //de base, vaut 0. 
-    if (DureeVie[1] / 3 > DureeVie[0]) //si est dans le premier tiers de sa vie
+
+    // État en fonction de la durée de vie
+    double fragilite = 0;
+    if (DureeVie[1] / 3.0 > DureeVie[0]) // premier tiers
     {
-      fragilite = DureeVie[0] / (DureeVie[1] / 3);
+      fragilite = DureeVie[0] / (DureeVie[1] / 3.0);
     }
-    if (DureeVie[1] - (DureeVie[1] / 3) < DureeVie[0]) //si est dans le dernier tiers de sa vie
+    if (DureeVie[1] - (DureeVie[1] / 3.0) < DureeVie[0]) // dernier tiers
     {
-      fragilite = 1 - (DureeVie[0] / (DureeVie[1] / 3));
+      fragilite = 1 - (DureeVie[0] / (DureeVie[1] / 3.0));
     }
 
-    //ETAT EN FONCTION DE L'HUILE : doit être à ±10% pour très bien, ±20% pour bien, sinon mauvais
+    // État des différents critères
     int etatHuile = VerifierEtatSpecifique("huile")[0];
-
-    //Etat en fonction de l'ELECTRISATION
     int etatElectrisation = VerifierEtatSpecifique("electricite")[0];
+    int etatUV = VerifierEtatSpecifique("UV")[0];
 
-    //Etat en fonction du niveau UV
-    int etatUV = VerifierEtatSpecifique("UV")[0]; //récupère seulement le niveau. 
+    double moyenne = (etatHuile + etatElectrisation + etatUV) / 3.0;
+    double poidsFragilite = 0.5 * fragilite + 0.5;
 
-    int etatGeneral = Convert.ToInt16((3 + ((0.5 * fragilite + 0.5) * ((etatHuile + etatElectrisation + etatUV) / 3))) / (1 + (0.5 * fragilite + 0.5)));
-    Etat = etatGeneral;
+    double resultat = (3 + poidsFragilite * moyenne) / (1 + poidsFragilite);
+    int etatGeneral = (int)Math.Round(resultat);
+
+    // Forcer le résultat à être entre 0 et 3
+    Etat = Math.Max(0, Math.Min(3, etatGeneral));
   }
 
   public int PreparerArrosagePlante() //CHOISIR NOMBRE DE LITRES À METTRE À PLANTE -> que pour arrosage spécifique d'une plante. 
