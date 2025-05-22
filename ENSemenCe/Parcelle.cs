@@ -98,7 +98,7 @@ public class Parcelle
             return 0;
         }
     }
-    public void ActuliserPousseMortRecolte(int mois, Monde monde)
+    public void ActuliserPousseMortRecolte(int mois, Monde monde)//LES ACTIONS EFFECTUER A LA FIN DE CHAQUE TOUR SUR LES PLANTE
     {
         int lignes = MatricePlantes.GetLength(0);
         int colonnes = MatricePlantes.GetLength(1);

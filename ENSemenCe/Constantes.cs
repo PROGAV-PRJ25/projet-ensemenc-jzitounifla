@@ -2,6 +2,7 @@ using System.Diagnostics;
 
 public static class Constantes
 {
+  //gere la navigation
   public static readonly Dictionary<string, Dictionary<int, string>> Menus = new Dictionary<string, Dictionary<int, string>> {
     // Pièces 11+1*3+2, déphasage : + si grand, négatif si petit
     { "MenuGeneral", new Dictionary<int, string> {
@@ -201,6 +202,10 @@ public static class Constantes
         {"vis", 30}
       }},
     };
+
+  //MARCHE
+
+  //valeur de chaque fruit au marche en boulons
   public static readonly Dictionary<string, int> FruitsGain = new Dictionary<string, int>
         {
             { "graines lumineuses", 10 },     // Marguerite
@@ -209,7 +214,7 @@ public static class Constantes
             { "pomwies", 4 },                // PoMWier
             { "poires hybrides", 4 }         // Poirier
         };
-
+  //cout de chaque ressource en boulons
   public static readonly Dictionary<string, int> CoutBoulons = new Dictionary<string, int>
         {
             { "plaque",3  },
@@ -218,10 +223,14 @@ public static class Constantes
             {"litreHuile", 5},
             {"lampeUsageUnique", 10},
         };
-
-  public const double Remboursement = 0.5;
+  //les composants s achetent par pack, nombre dans un pack
   public const int PackAchat = 10;
-  //urgence
+  //AUTRE
+  //remboursement a destruction de la plante par rapport à son prix d origine
+  public const double Remboursement = 0.5;
+
+  //URGENCE
   public const double ProbaModeUrgence = 0.2;
+  //temps de deplacement de la creature en mode urgence
   public const int TempsDpt = 500;
 }

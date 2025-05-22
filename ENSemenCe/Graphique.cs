@@ -3,7 +3,7 @@ public static class Graphique
     //Texte
     public const string Titre = "ENSemenCe";
 
-    //Palette de couleurs
+    //Palette de couleurs pour les différents composants
     public static readonly Dictionary<string, ConsoleColor> Palette = new Dictionary<string, ConsoleColor>{
             //Pieces 11+1*3+2, dephasage : + si grand, negatif si petit
             { "Titre",ConsoleColor.Green  },
@@ -25,25 +25,29 @@ public static class Graphique
             { "EtatPlante2",ConsoleColor.Yellow  },
             { "EtatPlante3",ConsoleColor.Green  },
     };
-    //Robots
+
+    //EQUIPEMENTS PARCELLE
+
+    //Design Robots le niveau
     public static readonly Dictionary<int, Dictionary<string, string>> RobotDesign = new Dictionary<int, Dictionary<string, string>> {
     { 1, new Dictionary<string, string> {
         { "tete", "◉" },
         { "corps", "|" },
-        { "pied", "└┘" }
+        { "pieds", "└┘" }
     }},
     { 2, new Dictionary<string, string> {
         { "tete", "⛶" },
         { "corps", "║" },
-        { "pied", "╚╝" }
+        { "pieds", "╚╝" }
     }},
     { 3, new Dictionary<string, string> {
         { "tete", "⌐■-■" },
         { "corps", "▓" },
-        { "pied", "██" }
+        { "pieds", "██" }
     }}
     };
-    //Design Cloture
+
+    //Design Cloture selon le niveau
     public static readonly Dictionary<int, Dictionary<string, string>> ClotureDesign = new Dictionary<int, Dictionary<string, string>> {
     // Pièces 11+1*3+2, déphasage : + si grand, négatif si petit
     { 1, new Dictionary<string, string> {
@@ -74,23 +78,6 @@ public static class Graphique
 }}
 
 };
-    //Design Arroseur
-    public static readonly Dictionary<int, string> ArroseurDesign = new Dictionary<int, string>
-    {
-        {1,"."},
-        {2,"╬"},
-        {3,"¤"},
-    };
-    public static readonly Dictionary<int, int> ArroseurFrequenceX = new Dictionary<int, int>{
-        {1,2},
-        {2,2},
-        {3,1},
-    };
-    public static readonly Dictionary<int, int> ArroseurFrequenceY = new Dictionary<int, int>{
-        {1,2},
-        {2,2},
-        {3,1},
-    };
     //Design Palissade
     public static readonly Dictionary<int, Dictionary<string, string>> PalissadeDesign = new Dictionary<int, Dictionary<string, string>> {
     // Pièces 11+1*3+2, déphasage : + si grand, négatif si petit
@@ -110,6 +97,26 @@ public static class Graphique
     }}
 };
 
+    //Design Arroseur selon le niveau
+    public static readonly Dictionary<int, string> ArroseurDesign = new Dictionary<int, string>
+    {
+        {1,"."},
+        {2,"╬"},
+        {3,"¤"},
+    };
+    //nombre de case entre arroseur en X
+    public static readonly Dictionary<int, int> ArroseurFrequenceX = new Dictionary<int, int>{
+        {1,2},
+        {2,2},
+        {3,1},
+    };
+    //nombre de case entre arroseur en Y
+    public static readonly Dictionary<int, int> ArroseurFrequenceY = new Dictionary<int, int>{
+        {1,2},
+        {2,2},
+        {3,1},
+    };
+
     //DESIGN Creature :
     public static readonly Dictionary<int, string[]> CreaturesDesign = new() {
     {1,["        ", " -----► ", "    |   ", "        " ]},
@@ -126,33 +133,7 @@ public static class Graphique
     {"Po1rier",["   ⌘⌘   ","  ⌘●●⌘  ","   ⌘⌘   ","   ||   "]},
 };
 
-    // _____|❋❋❋ |______
-    // _____| ❋❋❋|______
-
-    // _____|❋ ❋ ❋ ❋ |______
-    // _____| ❋ ❋ ❋ ❋|______
-    // _____|❋ ❋ ❋ ❋ |______
-    // _____| ❋ ❋ ❋ ❋|______
-
-    // _____|✿ ✿ |______
-    // _____| ✿ ✿|______
-
-    // _____|[﹥]＜|______
-    // _____|＜]﹥[|______
-
-    // _____|❦☐❦☐|______
-    // _____|■❦■❦|______
-
-    // _____|◎☐◎☐|______
-    // _____|■◎■◎|______
-
-    // _____|  ◦⁃⁃◦  |______
-    // _____| ◉◦◦◦◦◉ |______
-    // _____|  ◦⁃⁃◦  |______
-    // _____|   ∐∐   |______
-
-
-    //Console
+    //placement des elements
     public const int YGrilleStart = 3;
     public const int MargeGauche = 10;
     public const int MargeAvantMenu = 10;
@@ -165,14 +146,15 @@ public static class Graphique
     //intercase
     public const int YInterCase = 1;
     public const int XInterCase = 1;
-    public static void SauterNLigne(int n)
+
+    public static void SauterNLigne(int n)//SAUTE N LIGNE
     {
         for (int i = 0; i < n; i++)
         {
             Console.Write("\n");
         }
     }
-    public static void TracerPatternLongueurN(string pattern, int n, ConsoleColor couleur = ConsoleColor.White)
+    public static void TracerPatternLongueurN(string pattern, int n, ConsoleColor couleur = ConsoleColor.White)//TRACE UN PATTERN SUR UNE LONGUEUR N DE COULEUR
     {
         Console.ForegroundColor = couleur;
         for (int i = 0; i < n / pattern.Length; i++)
@@ -181,7 +163,7 @@ public static class Graphique
         }
         Console.Write(pattern.Substring(0, n % pattern.Length));
     }
-    public static void TracerTitreEncadre(string texte, int tailleGrilleCaractere)
+    public static void TracerTitreEncadre(string texte, int tailleGrilleCaractere)//TRACE TITRE ENCADRE
     {
         int longueur = MargeGauche + tailleGrilleCaractere + MargeAvantMenu + MargeDroite;
         int intervalLettre = 3;
@@ -201,12 +183,12 @@ public static class Graphique
         Graphique.TracerPatternLongueurN("-", longueur, couleur);
         SauterNLigne(2);
     }
-    public static void TracerClotureCote(int niveauCloture, int yConsole = 0)
+    public static void TracerClotureCote(int niveauCloture, int yConsole = 0)//TRACE UN MORCEAU DE CLOTURE SELON L EMPLACEMENT DE LA CASE
     {
         Console.ForegroundColor = Palette["Cloture"];
         Console.Write(ClotureDesign[niveauCloture]["vertical"][(yConsole - Graphique.YGrilleStart) % ClotureDesign[niveauCloture]["horizontal"].Length]);
     }
-    public static void TracerClotureHautBas(int niveauCloture, int longueur, string hauteur)
+    public static void TracerClotureHautBas(int niveauCloture, int longueur, string hauteur)//TRACE UNE LIGNE HORIZONTAL DE CLOTURE
     {
         Console.ForegroundColor = Graphique.Palette["Cloture"];
         Console.Write(ClotureDesign[niveauCloture]["angle" + hauteur + "Gauche"]);
@@ -214,10 +196,9 @@ public static class Graphique
         Console.Write(ClotureDesign[niveauCloture]["angle" + hauteur + "Droit"]);
     }
 
-    public static void TracerInterligneAroseur(bool arroseur, int niveauArroseur, int niveauPalissade, int longueurTotal)
+    public static void TracerInterligneAroseur(bool arroseur, int niveauArroseur, int niveauPalissade, int longueurTotal)//TRACE INTERLIGNE EN PRENANT EN COMPTE LA FREQUENCE DES ARROSEUR ET LES PALISSADES
     {
         int nombreArroseur = longueurTotal / ((Graphique.XTailleCase + 1) * ArroseurFrequenceX[niveauArroseur]);
-        //Console.Write(nombreArroseur);
         if (nombreArroseur != 0)
         {
             for (int i = 0; i < nombreArroseur; i++)
@@ -225,19 +206,24 @@ public static class Graphique
                 Console.ForegroundColor = Palette["Palissade"];
                 for (int j = 0; j < ArroseurFrequenceX[niveauArroseur] - 1; j++)
                 {
+                    //palissade entre les intercase
                     TracerPatternLongueurN(PalissadeDesign[niveauPalissade]["horizontal"], Graphique.XTailleCase);
+                    //pas de palissade au niveau des intercase
                     Console.Write(" ");
                 }
                 TracerPatternLongueurN(PalissadeDesign[niveauPalissade]["horizontal"], Graphique.XTailleCase);
+                //dessine l arroseur
                 if (arroseur)
                 {
                     Console.ForegroundColor = Palette["Arroseur"];
                     Console.Write(ArroseurDesign[niveauArroseur]);
                 }
+                //intercase sans arroseur
                 else
                     Console.Write(" ");
             }
         }
+        //dessine ce qu il y a apres le dernier arroseur
         Console.ForegroundColor = Palette["Palissade"];
         int nombrePalissadeRestante = (longueurTotal - nombreArroseur * ((Graphique.XTailleCase + 1) * ArroseurFrequenceX[niveauArroseur])) / (Graphique.XTailleCase + 1);
         for (int i = 0; i < nombrePalissadeRestante; i++)
@@ -245,15 +231,16 @@ public static class Graphique
             TracerPatternLongueurN(PalissadeDesign[niveauPalissade]["horizontal"], Graphique.XTailleCase);
             Console.Write(" ");
         }
+        //dessine les palissades restantes
         TracerPatternLongueurN(PalissadeDesign[niveauPalissade]["horizontal"], Graphique.XTailleCase);
     }
-    public static void TracerPalissadeVertical(int niveauPalissade, int yCase)
+    public static void TracerPalissadeVertical(int niveauPalissade, int yCase)//TRACE UN MORCEAU DE PALLISSADE A LA VERTICAL SELON LA POSITION
     {
         Console.ForegroundColor = Palette["Palissade"];
         Console.Write(PalissadeDesign[niveauPalissade]["vertical"][yCase % PalissadeDesign[niveauPalissade]["vertical"].Length]);
     }
 
-    public static void AfficherDictionnaire(Dictionary<string, int> dic, ConsoleColor couleur)
+    public static void AfficherDictionnaire(Dictionary<string, int> dic, ConsoleColor couleur)//AFFICHE UN DICTIONNAIRE AVEC CLE VALEUR SUR UNE MEME LIGNE
     {
         Console.ForegroundColor = couleur;
         foreach (var pair in dic)
@@ -262,19 +249,39 @@ public static class Graphique
             Console.Write(pair.Key + " : " + pair.Value);
         }
     }
-    public static void AfficherRobot(int niveau)
+    public static void AfficherRobot(int niveau)//AFFICHE LE ROBOT
     {
         Console.ForegroundColor = Palette["Robots"];
-        var design = RobotDesign[niveau];
-
-        string tete = design.ContainsKey("tete") ? design["tete"] : " ";
-        string corps = design.ContainsKey("corps") ? design["corps"] : "|";
-        string piedGauche = design.ContainsKey("piedGauche") ? design["piedGauche"] : "/";
-        string piedDroit = design.ContainsKey("piedDroit") ? design["piedDroit"] : "\\";
-
-        Console.WriteLine($"  {tete}  ");
-        Console.WriteLine($"  {corps}  ");
-        Console.WriteLine($" {piedGauche}{piedDroit} ");
+        Console.WriteLine("  " + RobotDesign[niveau]["tete"] + "  ");
+        Console.WriteLine("  " + RobotDesign[niveau]["corps"] + "  ");
+        Console.WriteLine("  " + RobotDesign[niveau]["pieds"] + "  ");
     }
 
 };
+
+
+//Brouillon design
+// _____|❋❋❋ |______
+// _____| ❋❋❋|______
+
+// _____|❋ ❋ ❋ ❋ |______
+// _____| ❋ ❋ ❋ ❋|______
+// _____|❋ ❋ ❋ ❋ |______
+// _____| ❋ ❋ ❋ ❋|______
+
+// _____|✿ ✿ |______
+// _____| ✿ ✿|______
+
+// _____|[﹥]＜|______
+// _____|＜]﹥[|______
+
+// _____|❦☐❦☐|______
+// _____|■❦■❦|______
+
+// _____|◎☐◎☐|______
+// _____|■◎■◎|______
+
+// _____|  ◦⁃⁃◦  |______
+// _____| ◉◦◦◦◦◉ |______
+// _____|  ◦⁃⁃◦  |______
+// _____|   ∐∐   |______
