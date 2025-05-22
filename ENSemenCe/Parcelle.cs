@@ -117,7 +117,7 @@ public class Parcelle
                         arbreFruit.ProductionTour += 1;
                         if (arbreFruit.ProductionTour == arbreFruit.FrequenceProduction)
                         {
-                            monde.FruitsProduits[arbreFruit.TypeFruits] += arbreFruit.NombreFruits;
+                            monde.FruitsProduits[arbreFruit.TypeFruits] += arbreFruit.NombreFruits + NiveauRobots;
                             arbreFruit.ProductionTour = 0;
                         }
                     }

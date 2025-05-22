@@ -170,6 +170,14 @@ public class Monde
                 SelectionCase();
             }
         }
+        else if (SectionSelectionnee == "ArroserUnePlante")
+        {
+            SelectionCase();
+        }
+        else if (SectionSelectionnee == "ArrosageAutomatique")
+        {
+            ArroserParcelleSelectionnee();
+        }
         else
         {
             MenuSelectionnee = SectionSelectionnee;
@@ -260,9 +268,9 @@ public class Monde
                         {
                             DemonterPlante();
                         }
-                        else if (MenuSelectionnee == "Arroser")
+                        else if (SectionSelectionnee == "ArroserUnePlante")
                         {
-                            ArroserPlante(Mois);
+                            //ArroserPlante(Mois);
                         }
                         else if (MenuSelectionnee == "Pieges")
                         {
@@ -295,7 +303,7 @@ public class Monde
             else
                 CaseSelectionneePossible = true;
         }
-        else if (SectionSelectionnee == "Demonter" || MenuSelectionnee == "Arroser")
+        else if (SectionSelectionnee == "Demonter" || SectionSelectionnee == "ArroserUnePlante")
         {
             if (ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] != null)
                 CaseSelectionneePossible = true;
@@ -772,7 +780,7 @@ public class Monde
         }
         else if ((SectionSelectionnee == "Robots-Travailleurs") && ListParcelle[ParcelleSlectionnee].NiveauRobots < 3)
         {
-            ListParcelle[ParcelleSlectionnee].NiveauRobots = 2;
+            ListParcelle[ParcelleSlectionnee].NiveauRobots += 1;
             ButAmelioration = "Augmente les récolotes";
             amelioration = true;
         }
