@@ -892,16 +892,58 @@ public class Monde
     }
     public void ArroserTout() //ARROSER TOUTES LES PLANTES
     {
+        int coutArroserTout = 0;
         foreach (Parcelle parcelle in ListParcelle)
         {
-            Composants["boulons"] = -parcelle.ArroserParcelle(Composants["boulons"], Mois); //on arrose et on fait payer en boulons
+            coutArroserTout += parcelle.CalculerCoutArrosageParcelle(Composants["boulons"], Mois); //on calcule le cout pour tout arroser
         }
+        if (Composants["boulons"] >= coutArroserTout)
+        {  //si on a assez de boulons pour tout arroser 
+            Console.WriteLine("Cette action vous coûtera " + coutArroserTout + " boulons. Voulez-vous la réaliser ? Entrée pour valider, E pour annuler"); //vérifier que la personne veut bien arroser avec le prix
+            ConsoleKeyInfo touche = Console.ReadKey(true);
+            while ((touche.Key != ConsoleKey.Enter) || (touche.Key != ConsoleKey.E)) //s'assurer qu'ils pressent pas la mauvaise touche
+            {
+                Console.WriteLine("Erreur : mauvaise touche. Veuillez presser entrée pour valider, E pour annuler.");
+                touche = Console.ReadKey(true);
+
+            }
+            if (touche.Key == ConsoleKey.Enter)
+            {
+                foreach (Parcelle parcelle in ListParcelle) parcelle.ArroserParcelle(Mois); //arroser les parcelles
+                Composants["boulons"] -= coutArroserTout; //faire payer
+            }
+            else Console.WriteLine("Action annulée.");
+        }
+        else Console.WriteLine("Vous n'avez pas assez de boulons pour réaliser cette action. Action annulée.");
     }
     public void ArroserParcelleSelectionnee() //ARROSER LA PARCELLE
     {
         //selectionnerParcelle
         int index = 0;
-        Composants["boulons"] = -ListParcelle[index].ArroserParcelle(Composants["boulons"], Mois); //on arrose et on fait payer en boulons
+        int coutArroser = ListParcelle[index].CalculerCoutArrosageParcelle(Composants["boulons"], Mois);
+
+        //Si on a assez de boulons, proposer d'arroser en montrant le prix 
+        if (Composants["boulons"] >= coutArroser)
+        {
+            Console.WriteLine("Cette action vous coûtera " + coutArroser + " boulons. Voulez-vous la réaliser ? Entrée pour valider, E pour annuler"); //vérifier que la personne veut bien arroser avec le prix
+            ConsoleKeyInfo touche = Console.ReadKey(true);
+            while ((touche.Key != ConsoleKey.Enter) || (touche.Key != ConsoleKey.E)) //s'assurer qu'ils pressent pas la mauvaise touche
+            {
+                Console.WriteLine("Erreur : mauvaise touche. Veuillez presser entrée pour valider, E pour annuler.");
+                touche = Console.ReadKey(true);
+
+            }
+            if (touche.Key == ConsoleKey.Enter)
+            {
+                ListParcelle[index].ArroserParcelle(Mois); //arroser la parcelle
+                Composants["boulons"] -= coutArroser; //faire payer
+            }
+            else Console.WriteLine("Action annulée.");
+        }
+
+        //Sinon, annuler l'action. 
+        else Console.WriteLine("Vous n'avez pas assez de boulons pour réaliser cette action. Action annulée.");
+
     }
     public void EclairerPlante()
     {
