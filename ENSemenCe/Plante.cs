@@ -114,7 +114,7 @@ public abstract class Plante
         detail = NiveauHuile / DonneesPlantes.PlantesRessources[TypePlante]["huile"] * 100;
         break;
 
-      case "electrisation":
+      case "electricite":
         if (NiveauElectricite > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauElectricite < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
         {
           //si on est dans les 10% 
@@ -178,19 +178,38 @@ public abstract class Plante
     return etatGeneral;
   }
 
-  public void ArroserPlante() //ARROSER PLANTE
+  public int PreparerArrosagePlante() //CHOISIR NOMBRE DE LITRES À METTRE À PLANTE -> que pour arrosage spécifique d'une plante. 
   {
     int[] etatHuile = VerifierEtatSpecifique("huile");
+    int litresAchetes;
     Console.WriteLine($"Etat de la plante avant arrosage : niveau d'huile à {etatHuile[1]}% de sa valeur idéale, ce qui correspond à une note de {etatHuile[0]} sur 3.");
-
-
-
+    if (etatHuile[1] < 100)
+    {
+      Console.WriteLine($"Il manque {DonneesPlantes.PlantesRessources[TypePlante]["huile"] - NiveauHuile} pour que la plante retrouve son état optimal.");
+    }
+    else
+    {
+      Console.WriteLine("Cette plante robotique est parfaitement huilée !! Voulez-vous tout de même l'arroser ?");
+      Console.Write("Entrez 'oui' ou 'non' : ");
+      string reponse = Console.ReadLine()!;
+      while ((reponse != "oui") && (reponse != "non"))
+      {
+        Console.Write("Entrez 'oui' ou 'non' : ");
+        reponse = Console.ReadLine()!;
+      }
+      if (reponse == "non") return 0; //VOIR POUR FAIRE UN RETURN 0 ??? 
+    }
+    Console.WriteLine($"Prix de l'huile : {Constantes.CoutBoulons["litreHuile"]} boulons par litre. Combien de litres voulez vous acheter ? (Précisez la quantité en L, ou 0 pour annuler l'achat, puis pressez 'Entrée')");
+    Console.Write("> Quantité souhaitée : ");
+    litresAchetes = Convert.ToInt16(Console.ReadLine()!);
+    return litresAchetes;
   }
-
-
-
-
+  public void ArroserPlante(double litres)
+  {
+    NiveauHuile += litres;
+  }
 }
+
 
 
 /*

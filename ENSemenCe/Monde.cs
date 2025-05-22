@@ -815,22 +815,28 @@ public class Monde
         var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
         if (plante != null)
         {
-            //ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].Arroser();
-            //actualiser eau
+            int litresSouhaites = plante.PreparerArrosagePlante();
+            if (Composants["boulons"] < litresSouhaites * Constantes.CoutBoulons["litreHuile"])
+                Console.WriteLine("Vous n'avez pas assez de boulons pour faire cette action.");
+            else
+            {
+                Composants["boulons"] = -litresSouhaites * Constantes.CoutBoulons["litreHuile"];
+                plante.ArroserPlante(litresSouhaites);
+            }
         }
     }
     public void ArroserTout() //ARROSER TOUTES LES PLANTES
     {
         foreach (Parcelle parcelle in ListParcelle)
         {
-            parcelle.ArroserParcelle();
+            parcelle.ArroserParcelle(Composants["boulons"]);
         }
     }
     public void ArroserParcelleSelectionnee() //ARROSER LA PARCELLE
     {
         //selectionnerParcelle
         int index = 0;
-        ListParcelle[index].ArroserParcelle();
+        ListParcelle[index].ArroserParcelle(Composants["boulons"]);
     }
     public void EclairerPlante()
     {

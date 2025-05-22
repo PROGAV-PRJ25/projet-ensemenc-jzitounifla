@@ -217,6 +217,7 @@ public static class Constantes
             { "plaque",3  },
             { "tige", 2 },
             { "vis", 2 },
+            {"litreHuile", 5},
         };
 
   public const double Remboursement = 0.5;

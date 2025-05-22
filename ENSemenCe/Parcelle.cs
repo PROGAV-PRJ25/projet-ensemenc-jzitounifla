@@ -46,10 +46,16 @@ public class Parcelle
         else NomParcelle = "Parcelle n°" + IndexParcelle + 1 + "- " + NomParcelle; //Nom choisi = "Parcelle n°1 - NomChoisi"
         NbParcelle++;
     }
-    public void ArroserParcelle()
+
+
+    public void ArroserParcelle(int boulonsDispos)
     {
         int lignes = MatricePlantes.GetLength(0);
         int colonnes = MatricePlantes.GetLength(1);
+        int qteArrosage = NiveauArroseur * 25 / 100; //Un arroseur niveau 1 arrose de 25%, niveau 2 50% et niveau 3 de 75% de l'huile manquante à la plante. 
+        int litreParPlante;
+        int nbPlantesArrosees = 0;
+
         for (int i = 0; i < lignes; i++)
         {
             for (int j = 0; j < colonnes; j++)
@@ -57,10 +63,37 @@ public class Parcelle
                 Plante plante = MatricePlantes[i, j];
                 if (plante != null) //on vérifie s'il y a une plante à cet endroit là 
                 {
-                    int a = 1;
-                    //on pourrra remplacer le int a par : Plante.Arroser(NiveauArroseur);
+                    litreParPlante = Convert.ToInt16(DonneesPlantes.PlantesRessources[plante.TypePlante]["huile"] - plante.NiveauHuile) * qteArrosage;
+                    if (litreParPlante > 0)
+                    {
+                        nbPlantesArrosees++; //s'il faut l'arroser, on incrémente le nombre de plantes à arroser. 
+                    }
                 }
             }
         }
+
+        if (nbPlantesArrosees * 5 <= boulonsDispos) //Arrose la parcelle si on a assez de boulons. Sinon, dead. 
+        {
+
+            for (int i = 0; i < lignes; i++)
+            {
+                for (int j = 0; j < colonnes; j++)
+                {
+                    Plante plante = MatricePlantes[i, j];
+                    if (plante != null) //on vérifie s'il y a une plante à cet endroit là 
+                    {
+                        litreParPlante = Convert.ToInt16(DonneesPlantes.PlantesRessources[plante.TypePlante]["huile"] - plante.NiveauHuile) * qteArrosage;
+                        if (litreParPlante < 0)
+                        {
+                            litreParPlante = 0;
+                        }
+                        plante.ArroserPlante(litreParPlante);
+                    }
+                }
+            }
+        }
+        else { Console.WriteLine("Vous n'avez pas assez de boulons pour effectuer cette action."); }
+
+
     }
 }
