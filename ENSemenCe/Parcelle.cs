@@ -46,7 +46,7 @@ public class Parcelle
         else NomParcelle = "Parcelle n°" + IndexParcelle + 1 + "- " + NomParcelle; //Nom choisi = "Parcelle n°1 - NomChoisi"
         NbParcelle++;
     }
-    public int ArroserParcelle(int boulonsDispos)
+    public int ArroserParcelle(int boulonsDispos, int mois)
     {
         int lignes = MatricePlantes.GetLength(0);
         int colonnes = MatricePlantes.GetLength(1);
@@ -86,7 +86,7 @@ public class Parcelle
                         {
                             litreParPlante = 0;
                         }
-                        plante.ArroserPlante(litreParPlante);
+                        plante.ArroserPlante(litreParPlante, mois, this);
                     }
                 }
             }
@@ -121,8 +121,9 @@ public class Parcelle
                             arbreFruit.ProductionTour = 0;
                         }
                     }
+                    MatricePlantes[i, j].CalculerEtatGeneral(mois, this);
                     //si la plante est morte
-                    if (MatricePlantes[i, j].CalculerEtatGeneral(mois, this) == 0)
+                    if (MatricePlantes[i, j].Etat == 0)
                     {
                         MatricePlantes[i, j] = null;
                     }

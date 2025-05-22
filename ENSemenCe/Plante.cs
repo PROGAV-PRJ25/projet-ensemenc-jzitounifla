@@ -61,13 +61,15 @@ public abstract class Plante
   public double NiveauElectricite { get; set; } //besoin d'assez d'électricité dans l'air pour fonctionner
   public double NiveauUV { get; set; } //besoin d'assez d'UV aussi (ensoleillement)
 
-  public int AffichageTour { get; set; }
+  public int AffichageTour { get; set; } //combien de case afficher
+  public int Etat { get; set; }//sante de la plante
   //CONSTRUCTEUR
   public Plante(Parcelle parcelle, int x, int y)
   {
     Parcelle = parcelle;
     Coord = [x, y];
     AffichageTour = 1;
+    Etat = 3;
   }
   //pour les différents types de plantes, faire diff matrices qui changent les propriétés de chaque 
   //string pour le nom de la plante, puis tableau pour nécessaire construction
@@ -146,7 +148,7 @@ public abstract class Plante
     return [niveau, Convert.ToInt16(detail)]; //RENVOIE UNE MATRICE AVEC LE NIVEAU ET LE POURCENTAGE
   }
 
-  public int CalculerEtatGeneral(int mois, Parcelle parcelle) //Calculer l'état de la plante selon la météo du mois et la parcelle où elle est plantée
+  public void CalculerEtatGeneral(int mois, Parcelle parcelle) //Calculer l'état de la plante selon la météo du mois et la parcelle où elle est plantée
   /*
   Renvoie un entier : 
   3 => en très bonne santé
@@ -176,8 +178,7 @@ public abstract class Plante
     int etatUV = VerifierEtatSpecifique("UV")[0]; //récupère seulement le niveau. 
 
     int etatGeneral = Convert.ToInt16((3 + ((0.5 * fragilite + 0.5) * ((etatHuile + etatElectrisation + etatUV) / 3))) / (1 + (0.5 * fragilite + 0.5)));
-
-    return etatGeneral;
+    Etat = etatGeneral;
   }
 
   public int PreparerArrosagePlante() //CHOISIR NOMBRE DE LITRES À METTRE À PLANTE -> que pour arrosage spécifique d'une plante. 
@@ -206,9 +207,10 @@ public abstract class Plante
     litresAchetes = Convert.ToInt16(Console.ReadLine()!);
     return litresAchetes;
   }
-  public void ArroserPlante(double litres)
+  public void ArroserPlante(double litres, int mois, Parcelle parcelle)
   {
     NiveauHuile += litres;
+    CalculerEtatGeneral(mois, parcelle);
   }
 }
 

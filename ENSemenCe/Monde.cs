@@ -262,7 +262,7 @@ public class Monde
                         }
                         else if (MenuSelectionnee == "Arroser")
                         {
-                            ArroserPlante();
+                            ArroserPlante(Mois);
                         }
                         else if (MenuSelectionnee == "Pieges")
                         {
@@ -475,7 +475,7 @@ public class Monde
                             //dessine la plante en fonction de son nombre de tour
                             if (Graphique.YTailleCase - yCase <= ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].AffichageTour)
                             {
-                                Console.ForegroundColor = Graphique.Palette["EtatPlante" + ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].CalculerEtatGeneral(Mois, ListParcelle[ParcelleSlectionnee])];
+                                Console.ForegroundColor = Graphique.Palette["EtatPlante" + ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].Etat];
                                 Console.Write(Graphique.PlantesDesign[ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].TypePlante][yCase]);
                             }
                             else
@@ -817,7 +817,7 @@ public class Monde
         return possible;
     }
     //En cours
-    public void ArroserPlante() //ARROSER LA PLANTE SÉLECTIONNÉE
+    public void ArroserPlante(int mois) //ARROSER LA PLANTE SÉLECTIONNÉE
     {
         var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
         if (plante != null)
@@ -828,7 +828,7 @@ public class Monde
             else
             {
                 Composants["boulons"] = -litresSouhaites * Constantes.CoutBoulons["litreHuile"];
-                plante.ArroserPlante(litresSouhaites);
+                plante.ArroserPlante(litresSouhaites, mois, ListParcelle[ParcelleSlectionnee]);
             }
         }
     }
@@ -836,14 +836,14 @@ public class Monde
     {
         foreach (Parcelle parcelle in ListParcelle)
         {
-            Composants["boulons"] = -parcelle.ArroserParcelle(Composants["boulons"]); //on arrose et on fait payer en boulons
+            Composants["boulons"] = -parcelle.ArroserParcelle(Composants["boulons"], Mois); //on arrose et on fait payer en boulons
         }
     }
     public void ArroserParcelleSelectionnee() //ARROSER LA PARCELLE
     {
         //selectionnerParcelle
         int index = 0;
-        Composants["boulons"] = -ListParcelle[index].ArroserParcelle(Composants["boulons"]); //on arrose et on fait payer en boulons
+        Composants["boulons"] = -ListParcelle[index].ArroserParcelle(Composants["boulons"], Mois); //on arrose et on fait payer en boulons
     }
     public void EclairerPlante()
     {
