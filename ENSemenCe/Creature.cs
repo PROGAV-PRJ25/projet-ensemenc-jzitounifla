@@ -46,7 +46,7 @@ public class Creature
                 break;
         }
     }
-    public void Manger()
+    public void Manger()//SUPPRIME LA PLANTE SUR LA CASE DE LA CREATURE
     {
         MondeCreature.ListParcelle[MondeCreature.ParcelleSlectionnee].MatricePlantes[X, Y] = null;
     }
