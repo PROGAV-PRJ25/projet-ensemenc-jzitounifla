@@ -106,7 +106,7 @@ public class Monde
 
 
     //Fonctions pour le déroulement des tours
-    public void Jouer() //LA BOUCLE GÉNÉRALE DE JEU !! LÀ QU'À LIEU LE TOUR
+    public void Jouer() //LA BOUCLE GÉNÉRALE DE JEU !! LÀ QU'A LIEU LE TOUR
     {
         Passer = false;
         Mois = -1;
@@ -293,6 +293,7 @@ public class Monde
                 case ConsoleKey.Enter:
                     if (CaseSelectionneePossible)
                     {
+                        valider = true;
                         if (MenuSelectionnee == "Planter")
                         {
                             Planter(TypePlanteSelectionne);
@@ -303,14 +304,14 @@ public class Monde
                         }
                         else if (SectionSelectionnee == "ArroserUnePlante")
                         {
-                            ArroserPlante(Mois);
+                            valider = ArroserPlante(Mois); //on arrose la plante si c'est possible, sinon ça met "valider = false"
                         }
                         else if (MenuSelectionnee == "Pieges")
                         {
                             PayerConstruction(Constantes.PiegeNecessaireConstruction[SectionSelectionnee]);
                             ModeUrgenceFin();//Creature piege, fin du mode urgence
                         }
-                        valider = true;
+
                     }
                     break;
                 //annuler
@@ -878,27 +879,32 @@ public class Monde
         return possible;
     }
     //En cours
-    public void ArroserPlante(int mois) //ARROSER LA PLANTE SÉLECTIONNÉE
+    public bool ArroserPlante(int mois) //ARROSER LA PLANTE SÉLECTIONNÉE
     {
         var plante = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]];
         if (plante != null)
         {
             int litresSouhaites = plante.PreparerArrosagePlante();
             if (Composants["boulons"] < litresSouhaites * Constantes.CoutBoulons["litreHuile"])
+            {
                 Console.WriteLine("Vous n'avez pas assez de boulons pour faire cette action.");
+                return false;
+            }
             else
             {
                 Composants["boulons"] = -litresSouhaites * Constantes.CoutBoulons["litreHuile"];
                 plante.ArroserPlante(litresSouhaites, mois, ListParcelle[ParcelleSlectionnee]);
+                return true;
             }
         }
+        else return false;
     }
     public void ArroserTout() //ARROSER TOUTES LES PLANTES
     {
         int coutArroserTout = 0;
         foreach (Parcelle parcelle in ListParcelle)
         {
-            //coutArroserTout += parcelle.CalculerCoutArrosageParcelle(Composants["boulons"], Mois); //on calcule le cout pour tout arroser
+            coutArroserTout += parcelle.CalculerCoutArrosageParcelle(); //on calcule le cout pour tout arroser
         }
         if (Composants["boulons"] >= coutArroserTout)
         {  //si on a assez de boulons pour tout arroser 

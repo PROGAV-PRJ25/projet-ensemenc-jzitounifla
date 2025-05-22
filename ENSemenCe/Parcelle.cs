@@ -49,7 +49,7 @@ public class Parcelle
         else NomParcelle = "Parcelle n°" + IndexParcelle + 1 + "- " + NomParcelle; //Nom choisi = "Parcelle n°1 - NomChoisi"
         NbParcelle++;
     }
-    public int CalculerArroserParcelle(int mois)
+    public int CalculerCoutArrosageParcelle()
     {
         int lignes = MatricePlantes.GetLength(0);
         int colonnes = MatricePlantes.GetLength(1);
