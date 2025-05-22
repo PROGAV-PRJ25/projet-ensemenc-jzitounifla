@@ -37,6 +37,7 @@ public class Monde
     public bool Passer { get; set; }//variable pour passer un tour
     public Dictionary<string, int> FruitsProduits { get; set; }
     Random Rnd = new Random();
+    public Fee FeeMonde;
     public Monde(int dimX, int dimY, int coefficientPieceDepart = 5) //CONSTRUCTEUR MONDE
     {
         //taille de la grille
@@ -56,7 +57,8 @@ public class Monde
 
         //creature
         CreatureMonde = null;
-
+        //fee
+        FeeMonde = null;
         //label
         Message = "";
         Information = "";
@@ -102,6 +104,7 @@ public class Monde
         CaseSelectionnee[0] = -1;
     }
 
+
     //Fonctions pour le déroulement des tours
     public void Jouer() //LA BOUCLE GÉNÉRALE DE JEU !! LÀ QU'À LIEU LE TOUR
     {
@@ -112,6 +115,7 @@ public class Monde
         {
             Passer = false;
             Mois = (Mois + 1) % DonneesClimatiques.TousLesMois.Count();
+            FeeUrgenceTirage();
             ModeUrgenceTirage();
             //boucle pour un mois
             while ((!Passer) || Urgence)
@@ -894,14 +898,16 @@ public class Monde
     {
         foreach (Parcelle parcelle in ListParcelle)
         {
-            Composants["boulons"] = -parcelle.ArroserParcelle(Composants["boulons"], Mois); //on arrose et on fait payer en boulons
+            Composants["boulons"] = -parcelle.CalculerArroserParcelle(Mois); //on arrose et on fait payer en boulons
+            parcelle.ArroserParcelle(Mois);
         }
     }
     public void ArroserParcelleSelectionnee() //ARROSER LA PARCELLE
     {
         //selectionnerParcelle
         int index = 0;
-        Composants["boulons"] = -ListParcelle[index].ArroserParcelle(Composants["boulons"], Mois); //on arrose et on fait payer en boulons
+        Composants["boulons"] = -ListParcelle[index].CalculerArroserParcelle(Mois); //on arrose et on fait payer en boulons
+        ListParcelle[index].ArroserParcelle(Mois);
     }
     public void EclairerPlante()
     {

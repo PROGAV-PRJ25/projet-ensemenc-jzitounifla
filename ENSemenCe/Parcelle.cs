@@ -25,6 +25,9 @@ public class Parcelle
     public int TemperatureVar { get; set; }
     public int RadioactiviteVar { get; set; }
 
+    public static int BonusArroseur { get; set; } = 25;
+    public static int CoutArrosageParPlante { get; set; } = 5;
+
     //CONSTRUCTEUR : 
     public Parcelle(int dimX, int dimY, string type)
     {   //
@@ -46,11 +49,11 @@ public class Parcelle
         else NomParcelle = "Parcelle n°" + IndexParcelle + 1 + "- " + NomParcelle; //Nom choisi = "Parcelle n°1 - NomChoisi"
         NbParcelle++;
     }
-    public int ArroserParcelle(int boulonsDispos, int mois)
+    public int CalculerArroserParcelle(int mois)
     {
         int lignes = MatricePlantes.GetLength(0);
         int colonnes = MatricePlantes.GetLength(1);
-        int qteArrosage = NiveauArroseur * 25 / 100; //Un arroseur niveau 1 arrose de 25%, niveau 2 50% et niveau 3 de 75% de l'huile manquante à la plante. 
+        double qteArrosage = NiveauArroseur * BonusArroseur / 100; //Un arroseur niveau 1 arrose de 25%, niveau 2 50% et niveau 3 de 75% de l'huile manquante à la plante. 
         int litreParPlante;
         int nbPlantesArrosees = 0;
 
@@ -61,7 +64,7 @@ public class Parcelle
                 Plante plante = MatricePlantes[i, j];
                 if (plante != null) //on vérifie s'il y a une plante à cet endroit là 
                 {
-                    litreParPlante = Convert.ToInt16(DonneesPlantes.PlantesRessources[plante.TypePlante]["huile"] - plante.NiveauHuile) * qteArrosage;
+                    litreParPlante = Convert.ToInt16((DonneesPlantes.PlantesRessources[plante.TypePlante]["huile"] - plante.NiveauHuile) * qteArrosage);
                     if (litreParPlante > 0)
                     {
                         nbPlantesArrosees++; //s'il faut l'arroser, on incrémente le nombre de plantes à arroser. 
@@ -70,32 +73,29 @@ public class Parcelle
             }
         }
 
-        int coutArrosage = nbPlantesArrosees * 5;
-        if (coutArrosage <= boulonsDispos) //Arrose la parcelle si on a assez de boulons. Sinon, dead. 
+        int coutArrosage = nbPlantesArrosees * CoutArrosageParPlante;
+        return coutArrosage;
+    }
+    public void ArroserParcelle(int mois)
+    {
+        int lignes = MatricePlantes.GetLength(0);
+        int colonnes = MatricePlantes.GetLength(1);
+        double qteArrosage = NiveauArroseur * BonusArroseur / 100; //Un arroseur niveau 1 arrose de 25%, niveau 2 50% et niveau 3 de 75% de l'huile manquante à la plante. 
+        for (int i = 0; i < lignes; i++)
         {
-
-            for (int i = 0; i < lignes; i++)
+            for (int j = 0; j < colonnes; j++)
             {
-                for (int j = 0; j < colonnes; j++)
+                Plante plante = MatricePlantes[i, j];
+                if (plante != null) //on vérifie s'il y a une plante à cet endroit là 
                 {
-                    Plante plante = MatricePlantes[i, j];
-                    if (plante != null) //on vérifie s'il y a une plante à cet endroit là 
+                    int litreParPlante = Convert.ToInt16((DonneesPlantes.PlantesRessources[plante.TypePlante]["huile"] - plante.NiveauHuile) * qteArrosage);
+                    if (litreParPlante < 0)
                     {
-                        litreParPlante = Convert.ToInt16(DonneesPlantes.PlantesRessources[plante.TypePlante]["huile"] - plante.NiveauHuile) * qteArrosage;
-                        if (litreParPlante < 0)
-                        {
-                            litreParPlante = 0;
-                        }
-                        plante.ArroserPlante(litreParPlante, mois, this);
+                        litreParPlante = 0;
                     }
+                    plante.ArroserPlante(litreParPlante, mois, this);
                 }
             }
-            return coutArrosage;
-        }
-        else
-        {
-            Console.WriteLine("Vous n'avez pas assez de boulons pour effectuer cette action.");
-            return 0;
         }
     }
     public void ActuliserPousseMortRecolte(int mois, Monde monde)//LES ACTIONS EFFECTUER A LA FIN DE CHAQUE TOUR SUR LES PLANTE

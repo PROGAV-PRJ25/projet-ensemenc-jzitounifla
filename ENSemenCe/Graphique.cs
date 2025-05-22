@@ -124,6 +124,15 @@ public static class Graphique
     {3,["||||||||", "| -  - |", "|      |", "| ---- |" ]},
     {4,["   Ø►   ", "    █   ", "   ▄█   ", "   |    " ]},
 };
+
+    //DESIGN FEE
+    public static string[] FeeDesign = {
+    "  /\\*/\\ ",
+    " <(o o)>",
+    "  \\ ^ / ",
+    "  /_~_\\ "
+    };
+
     //DESIGN PLANTES :
     public static readonly Dictionary<string, string[]> PlantesDesign = new() {
     {"Margu-ee-rite", ["❋ ❋ ❋ ❋ "," ❋ ❋ ❋ ❋","❋ ❋ ❋ ❋ "," ❋ ❋ ❋ ❋"]},
