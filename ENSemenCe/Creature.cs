@@ -131,3 +131,13 @@ public class CreatureNiveau4 : Creature
     {
     }
 }
+
+//fee
+public class Fee : Creature
+{
+    public int Bonus { get; set; }
+    public Fee(Monde monde, string nom, int bonus)
+        : base(monde, nom, 1, 2, 5, Graphique.FeeDesign)
+    {
+    }
+}

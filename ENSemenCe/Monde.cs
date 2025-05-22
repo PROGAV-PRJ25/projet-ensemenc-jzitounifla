@@ -37,6 +37,7 @@ public class Monde
     public bool Passer { get; set; }//variable pour passer un tour
     public Dictionary<string, int> FruitsProduits { get; set; }
     Random Rnd = new Random();
+    public Fee FeeMonde;
     public Monde(int dimX, int dimY, int coefficientPieceDepart = 5) //CONSTRUCTEUR MONDE
     {
         //taille de la grille
@@ -56,7 +57,8 @@ public class Monde
 
         //creature
         CreatureMonde = null;
-
+        //fee
+        FeeMonde = null;
         //label
         Message = "";
         Information = "";
@@ -102,6 +104,7 @@ public class Monde
         CaseSelectionnee[0] = -1;
     }
 
+
     //Fonctions pour le déroulement des tours
     public void Jouer() //LA BOUCLE GÉNÉRALE DE JEU !! LÀ QU'À LIEU LE TOUR
     {
@@ -112,6 +115,7 @@ public class Monde
         {
             Passer = false;
             Mois = (Mois + 1) % DonneesClimatiques.TousLesMois.Count();
+            //FeeUrgenceTirage();
             ModeUrgenceTirage();
             //boucle pour un mois
             while ((!Passer) || Urgence)
@@ -202,8 +206,7 @@ public class Monde
         }
         else if (SectionSelectionnee == "ArrosageAutomatique")
         {
-            //RAJOUTER UNE CONDITION SI POSSIBLE
-            ArroserParcelleSelectionnee();
+
         }
         else
         {
@@ -895,7 +898,7 @@ public class Monde
         int coutArroserTout = 0;
         foreach (Parcelle parcelle in ListParcelle)
         {
-            coutArroserTout += parcelle.CalculerCoutArrosageParcelle(Composants["boulons"], Mois); //on calcule le cout pour tout arroser
+            //coutArroserTout += parcelle.CalculerCoutArrosageParcelle(Composants["boulons"], Mois); //on calcule le cout pour tout arroser
         }
         if (Composants["boulons"] >= coutArroserTout)
         {  //si on a assez de boulons pour tout arroser 
@@ -920,8 +923,8 @@ public class Monde
     {
         //selectionnerParcelle
         int index = 0;
-        int coutArroser = ListParcelle[index].CalculerCoutArrosageParcelle(Composants["boulons"], Mois);
-
+        //int coutArroser = ListParcelle[index].CalculerCoutArrosageParcelle(Composants["boulons"], Mois);
+        int coutArroser = 0;
         //Si on a assez de boulons, proposer d'arroser en montrant le prix 
         if (Composants["boulons"] >= coutArroser)
         {
