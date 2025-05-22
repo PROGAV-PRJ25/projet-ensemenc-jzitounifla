@@ -48,7 +48,7 @@ public class Parcelle
     }
 
 
-    public void ArroserParcelle(int boulonsDispos)
+    public int ArroserParcelle(int boulonsDispos)
     {
         int lignes = MatricePlantes.GetLength(0);
         int colonnes = MatricePlantes.GetLength(1);
@@ -72,7 +72,8 @@ public class Parcelle
             }
         }
 
-        if (nbPlantesArrosees * 5 <= boulonsDispos) //Arrose la parcelle si on a assez de boulons. Sinon, dead. 
+        int coutArrosage = nbPlantesArrosees * 5;
+        if (coutArrosage <= boulonsDispos) //Arrose la parcelle si on a assez de boulons. Sinon, dead. 
         {
 
             for (int i = 0; i < lignes; i++)
@@ -91,9 +92,12 @@ public class Parcelle
                     }
                 }
             }
+            return coutArrosage;
         }
-        else { Console.WriteLine("Vous n'avez pas assez de boulons pour effectuer cette action."); }
-
-
+        else
+        {
+            Console.WriteLine("Vous n'avez pas assez de boulons pour effectuer cette action.");
+            return 0;
+        }
     }
 }

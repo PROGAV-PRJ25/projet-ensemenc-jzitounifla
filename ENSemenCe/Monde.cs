@@ -829,14 +829,14 @@ public class Monde
     {
         foreach (Parcelle parcelle in ListParcelle)
         {
-            parcelle.ArroserParcelle(Composants["boulons"]);
+            Composants["boulons"] = -parcelle.ArroserParcelle(Composants["boulons"]); //on arrose et on fait payer en boulons
         }
     }
     public void ArroserParcelleSelectionnee() //ARROSER LA PARCELLE
     {
         //selectionnerParcelle
         int index = 0;
-        ListParcelle[index].ArroserParcelle(Composants["boulons"]);
+        Composants["boulons"] = -ListParcelle[index].ArroserParcelle(Composants["boulons"]); //on arrose et on fait payer en boulons
     }
     public void EclairerPlante()
     {
