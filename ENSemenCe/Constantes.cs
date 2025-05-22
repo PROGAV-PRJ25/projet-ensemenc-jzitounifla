@@ -232,7 +232,7 @@ public static class Constantes
   //URGENCE
   public const double ProbaModeUrgence = 0.2;
 
-  public const double ProbaPlanteMalade = 0.05;
+  public const double ProbaPlanteVirus = 0.05;
 
   //temps de deplacement de la creature en mode urgence
   public const int TempsDpt = 300;

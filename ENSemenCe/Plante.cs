@@ -66,7 +66,7 @@ public abstract class Plante
 
   public int AffichageTour { get; set; } //combien de case afficher
   public int Etat { get; set; }//sante de la plante
-  public bool Malade { get; set; }
+  public bool Virus { get; set; }
   Random random = new Random();
 
 
@@ -74,7 +74,7 @@ public abstract class Plante
   //CONSTRUCTEUR
   public Plante(Parcelle parcelle, int x, int y) //les trucs non gérés ici sont gérés individuellement dans la sous-classe (on a besoin d'autres infos)
   {
-    Malade = false;
+    Virus = false;
     Parcelle = parcelle;
     Coord = [x, y];
     AffichageTour = 1;
@@ -110,11 +110,11 @@ public abstract class Plante
     NiveauUV -= DonneesPlantes.PlantesRessources[TypePlante]["UV"] / 3;
     AffichageTour += 1;
 
-    //Decider si la plante est malade ce mois-ci
-    if (Constantes.ProbaPlanteMalade < random.NextDouble())
+    //Decider si la plante a un virus ce mois-ci
+    if (Constantes.ProbaPlanteVirus < random.NextDouble())
     { //si la plante est tiree au sort...
-      Malade = true;
-      Console.WriteLine("ATTENTION !! Votre plante " + TypePlante + " est malade !! Guerissez-la vite car cela diminue de moitié son état...");
+      Virus = true;
+      Console.WriteLine("ATTENTION !! Votre plante " + TypePlante + " est porteuse d'un virus !! Guerissez-la vite car cela diminue de moitié son état...");
     }
     Etat = CalculerEtatGeneral(mois, parcelle);
   }
@@ -184,7 +184,7 @@ public abstract class Plante
     double resultat = (3 + poidsFragilite * moyenne) / (1 + poidsFragilite);
 
 
-    if (Malade) { resultat /= 2; } //Si la plante est malade elle est en moitié bon état
+    if (Virus) { resultat /= 2; } //Si la plante est malade elle est en moitié bon état
 
 
     int etatGeneral = (int)Math.Round(resultat);
