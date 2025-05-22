@@ -44,6 +44,9 @@ public static class DonneesPlantes //TOUTES LES DONNÉES POUR GÉRER LES PLANTES
     {"Espace", 2}
       }}
 };
+  public static readonly List<string> TousTypesPlantes_Fleurs = new() { "Margu-ee-rite", "Rob-ose" };
+  public static readonly List<string> TousTypesPlantes_ArbreFruit = new() { "LierR3", "PoMWier", "Po1rier" };
+  public static readonly List<List<string>> TousTypesPlantes = new List<List<string>> { TousTypesPlantes_Fleurs, TousTypesPlantes_ArbreFruit };
 }
 
 public abstract class Plante
@@ -63,17 +66,27 @@ public abstract class Plante
 
   public int AffichageTour { get; set; } //combien de case afficher
   public int Etat { get; set; }//sante de la plante
+  public bool Malade { get; set; }
+  Random random = new Random();
+
+
+
   //CONSTRUCTEUR
-  public Plante(Parcelle parcelle, int x, int y)
+  public Plante(Parcelle parcelle, int x, int y) //les trucs non gérés ici sont gérés individuellement dans la sous-classe (on a besoin d'autres infos)
   {
+    Malade = false;
     Parcelle = parcelle;
     Coord = [x, y];
     AffichageTour = 1;
     Etat = 3;
   }
-  //pour les différents types de plantes, faire diff matrices qui changent les propriétés de chaque 
-  //string pour le nom de la plante, puis tableau pour nécessaire construction
-  //tableau : [nb boulons, nb plaques fer, nb tiges fer, nb vis, noyau vapeur]
+
+  public void InitialiserRessources()
+  {
+    NiveauHuile = DonneesPlantes.PlantesRessources[TypePlante]["huile"];
+    NiveauElectricite = DonneesPlantes.PlantesRessources[TypePlante]["electricite"];
+    NiveauUV = DonneesPlantes.PlantesRessources[TypePlante]["UV"];
+  }
 
   public void Pousser(int mois, Parcelle parcelle) // ce que la plante fait chaque mois, dépend dudit mois (conditions météo). SE FAIT AU DÉBUT DU MOIS
   {
@@ -96,14 +109,22 @@ public abstract class Plante
     NiveauElectricite -= DonneesPlantes.PlantesRessources[TypePlante]["electricite"] / 3; //le niveau d'électricité se fait diviser par 3
     NiveauUV -= DonneesPlantes.PlantesRessources[TypePlante]["UV"] / 3;
     AffichageTour += 1;
+
+    //Decider si la plante est malade ce mois-ci
+    if (Constantes.ProbaPlanteMalade < random.NextDouble())
+    { //si la plante est tiree au sort...
+      Malade = true;
+      Console.WriteLine("ATTENTION !! Votre plante " + TypePlante + " est malade !! Guerissez-la vite car cela diminue de moitié son état...");
+    }
+    Etat = CalculerEtatGeneral(mois, parcelle);
   }
 
   public int[] VerifierEtatSpecifique(string ressource)
   {
     int niveau = 1;
-    double detail = 0;
+    double detail;
 
-    double valeurActuelle = 0;
+    double valeurActuelle;
     double valeurIdeale = DonneesPlantes.PlantesRessources[TypePlante][ressource];
 
     switch (ressource)
@@ -119,7 +140,7 @@ public abstract class Plante
         break;
       default:
         Console.WriteLine("Ressource invalide.");
-        return new int[] { 0, 0 };
+        return [0, 0];
     }
 
     if (valeurActuelle > valeurIdeale * 0.8 && valeurActuelle < valeurIdeale * 1.2)
@@ -127,12 +148,12 @@ public abstract class Plante
       niveau = (valeurActuelle > valeurIdeale * 0.9 && valeurActuelle < valeurIdeale * 1.1) ? 3 : 2;
     }
 
-    detail = (valeurActuelle / valeurIdeale) * 100;
-    return new int[] { niveau, Convert.ToInt32(detail) };
+    detail = valeurActuelle / valeurIdeale * 100;
+    return [niveau, Convert.ToInt32(detail)];
   }
 
 
-  public void CalculerEtatGeneral(int mois, Parcelle parcelle) //Calculer l'état de la plante selon la météo du mois et la parcelle où elle est plantée
+  public int CalculerEtatGeneral(int mois, Parcelle parcelle) //Calculer l'état de la plante selon la météo du mois et la parcelle où elle est plantée
   /*
   Renvoie un entier : 
   3 => en très bonne santé
@@ -141,9 +162,7 @@ public abstract class Plante
   0 => Morte. 
   */
   {
-    //Etat en fonction de la duree de vie : fragilité de la plante augmente plus elle est jeune ou plus elle est vieille. 
-
-    // État en fonction de la durée de vie
+    // État en fonction de la durée de vie : fragilité de la plante augmente plus elle est jeune ou plus elle est vieille. 
     double fragilite = 0;
     if (DureeVie[1] / 3.0 > DureeVie[0]) // premier tiers
     {
@@ -163,10 +182,14 @@ public abstract class Plante
     double poidsFragilite = 0.5 * fragilite + 0.5;
 
     double resultat = (3 + poidsFragilite * moyenne) / (1 + poidsFragilite);
-    int etatGeneral = (int)Math.Round(resultat);
 
+
+    if (Malade) { resultat /= 2; } //Si la plante est malade elle est en moitié bon état
+
+
+    int etatGeneral = (int)Math.Round(resultat);
     // Forcer le résultat à être entre 0 et 3
-    Etat = Math.Max(0, Math.Min(3, etatGeneral));
+    return Math.Max(0, Math.Min(3, etatGeneral));
   }
 
   public int PreparerArrosagePlante() //CHOISIR NOMBRE DE LITRES À METTRE À PLANTE -> que pour arrosage spécifique d'une plante. 
@@ -200,6 +223,7 @@ public abstract class Plante
     NiveauHuile += litres;
     CalculerEtatGeneral(mois, parcelle);
   }
+
 }
 
 

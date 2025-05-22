@@ -17,31 +17,7 @@ public abstract class ArbreFruit : Plante
 }
 
 // Sous-classes concrètes
-public class Marguerite : ArbreFruit
-{
-    public Marguerite(Parcelle parcelle, int x, int y) : base(parcelle, x, y)
-    {
-        TypePlante = "Margu-ee-rite";
-        TypeFruits = "graines lumineuses";
-        NombreFruits = 3;
-        FrequenceProduction = 2;
-        EspacementNecessaire = Convert.ToInt16(DonneesPlantes.PlantesRessources[TypePlante]["Espace"]);
-        DureeVie = [0, Constantes.PlantesDureeVie[TypePlante]]; //en 0 le temps de vie vécu (ici 0 mois), en 1 le total (plus facile à accéder par la suite)
-    }
-}
 
-public class Robose : ArbreFruit
-{
-    public Robose(Parcelle parcelle, int x, int y) : base(parcelle, x, y)
-    {
-        TypePlante = "Rob-ose";
-        TypeFruits = "pétales d'acier";
-        NombreFruits = 2;
-        FrequenceProduction = 3;
-        EspacementNecessaire = Convert.ToInt16(DonneesPlantes.PlantesRessources[TypePlante]["Espace"]);
-        DureeVie = [0, Constantes.PlantesDureeVie[TypePlante]]; //en 0 le temps de vie vécu (ici 0 mois), en 1 le total (plus facile à accéder par la suite)
-    }
-}
 
 public class Lierre : ArbreFruit
 {
@@ -53,6 +29,7 @@ public class Lierre : ArbreFruit
         FrequenceProduction = 2;
         EspacementNecessaire = Convert.ToInt16(DonneesPlantes.PlantesRessources[TypePlante]["Espace"]);
         DureeVie = [0, Constantes.PlantesDureeVie[TypePlante]]; //en 0 le temps de vie vécu (ici 0 mois), en 1 le total (plus facile à accéder par la suite)
+        InitialiserRessources();
     }
 }
 
@@ -66,6 +43,7 @@ public class PoMWier : ArbreFruit
         FrequenceProduction = 1;
         EspacementNecessaire = Convert.ToInt16(DonneesPlantes.PlantesRessources[TypePlante]["Espace"]);
         DureeVie = [0, Constantes.PlantesDureeVie[TypePlante]]; //en 0 le temps de vie vécu (ici 0 mois), en 1 le total (plus facile à accéder par la suite)
+        InitialiserRessources();
     }
 }
 
@@ -79,6 +57,7 @@ public class Poirier : ArbreFruit
         FrequenceProduction = 2;
         EspacementNecessaire = Convert.ToInt16(DonneesPlantes.PlantesRessources[TypePlante]["Espace"]);
         DureeVie = [0, Constantes.PlantesDureeVie[TypePlante]]; //en 0 le temps de vie vécu (ici 0 mois), en 1 le total (plus facile à accéder par la suite)
+        InitialiserRessources();
     }
 }
 
@@ -106,8 +85,6 @@ public static class ArbreFruitRegistry
 {
     public static readonly Dictionary<string, ArbreFruitInfo> Infos = new()
     {
-        { "Margu-ee-rite", new ArbreFruitInfo("Margu-ee-rite", "graines lumineuses", 3, 2) },
-        { "Rob-ose",     new ArbreFruitInfo("Rob-ose", "pétales d'acier", 2, 3) },
         { "LierR3",     new ArbreFruitInfo("LierR3", "gousses grimpantes", 4, 2) },
         { "PoMWier",    new ArbreFruitInfo("PoMWier", "pomwies", 5, 1) },
         { "Po1rier",    new ArbreFruitInfo("Po1rier", "poires hybrides", 4, 2) },

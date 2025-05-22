@@ -585,8 +585,18 @@ public class Monde
             Graphique.AfficherDictionnaire(Constantes.PlantesNecessaireConstruction[SectionSelectionnee], Graphique.Palette["Information"]);
             Console.WriteLine("");
             //affiche les informations de la plante
-            var info = ArbreFruitRegistry.Infos[SectionSelectionnee];
-            Console.WriteLine($"{info.Nom} produit {info.NombreFruits} {info.TypeFruits} tous les {info.FrequenceProduction} cycles. A besoin {info.EspacementNecessaire} espace vide autour");
+
+            if (DonneesPlantes.TousTypesPlantes_Fleurs.Contains(SectionSelectionnee))//si c'est une fleur
+            {
+                var info = DonneesFleurs.Infos[SectionSelectionnee];
+                Console.WriteLine($"{info.Nom} produit {info.NombreFleur} {info.TypeFleur} par tour. A besoin {info.EspacementNecessaire} espace vide autour");
+            }
+
+            if (DonneesPlantes.TousTypesPlantes_ArbreFruit.Contains(SectionSelectionnee))
+            { //si c'est un arbre fruitier
+                var info = ArbreFruitRegistry.Infos[SectionSelectionnee];
+                Console.WriteLine($"{info.Nom} produit {info.NombreFruits} {info.TypeFruits} tous les {info.FrequenceProduction} cycles. A besoin {info.EspacementNecessaire} espace vide autour");
+            }
             Console.WriteLine(Constantes.PlantesDescription[SectionSelectionnee]);
         }
         else if (SectionSelectionnee == "Demonter" && CaseSelectionneePossible && CaseSelectionnee[0] != -1 && CaseSelectionnee[1] != -1)
