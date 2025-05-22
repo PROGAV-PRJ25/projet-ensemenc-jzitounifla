@@ -471,7 +471,7 @@ public class Monde
                             Graphique.TracerPatternLongueurN(" ", Graphique.XTailleCase);
                         else
                         {
-                            Console.ForegroundColor = Graphique.Palette["EtatPlante" + ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].CalculerEtat(Mois, ListParcelle[ParcelleSlectionnee])];
+                            Console.ForegroundColor = Graphique.Palette["EtatPlante" + ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].CalculerEtatGeneral(Mois, ListParcelle[ParcelleSlectionnee])];
                             Console.Write(Graphique.PlantesDesign[ListParcelle[ParcelleSlectionnee].MatricePlantes[xGrille, yGrille].TypePlante][yCase]);
                         }
                         //ne faire un espace après la derniere case

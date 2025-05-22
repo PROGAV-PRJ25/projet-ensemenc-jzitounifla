@@ -94,8 +94,57 @@ public abstract class Plante
     NiveauUV -= DonneesPlantes.PlantesRessources[TypePlante]["UV"] / 3;
   }
 
+  public int[] VerifierEtatSpecifique(string ressource) //Vérifie l'état de la plante quant à une ressource en particulier
+  {
+    int niveau = 1; //UNE NOTE SUR 3 -> SIMILAIRE À CELLE REPRÉSENTANT L'ÉTAT EN GÉNÉRAL
+    double detail = 51; //POURCENTAGE PAR RAPPORT À VALEUR IDEALE ATTENDUE
 
-  public int CalculerEtat(int mois, Parcelle parcelle) //Calculer l'état de la plante selon la météo du mois et la parcelle où elle est plantée
+    switch (ressource)
+    {
+      case "huile":
+
+        //si on est à ±20% du niveau d'huile requis
+        if (NiveauHuile > DonneesPlantes.PlantesRessources[TypePlante]["huile"] - (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauHuile < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
+        {
+          //si on est dans les 10% 
+          if (NiveauHuile > DonneesPlantes.PlantesRessources[TypePlante]["huile"] - (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauHuile < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
+            niveau = 3;
+          else niveau = 2;
+        }
+        detail = NiveauHuile / DonneesPlantes.PlantesRessources[TypePlante]["huile"] * 100;
+        break;
+
+      case "electrisation":
+        if (NiveauElectricite > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauElectricite < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
+        {
+          //si on est dans les 10% 
+          if (NiveauElectricite > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauElectricite < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
+            niveau = 3;
+          else niveau = 2;
+        }
+        detail = NiveauElectricite / DonneesPlantes.PlantesRessources[TypePlante]["electricite"] * 100;
+
+        break;
+
+      case "UV":
+        if (NiveauUV > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.5 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauUV < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.5 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
+        {
+          //si on est dans les 20% 
+          if (NiveauUV > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauUV < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
+            niveau = 3;
+          else niveau = 2;
+        }
+        detail = NiveauUV / DonneesPlantes.PlantesRessources[TypePlante]["UV"] * 100;
+        break;
+      default:
+        Console.WriteLine("Erreur de calcul de l'état de la plante : la valeur entrée ne correspondait pas à un état spécifique. Assurez-vous que l'état soit soit 'huile', soit 'electricite', soit 'UV'. ");
+        break;
+    }
+
+    return [niveau, Convert.ToInt16(detail)]; //RENVOIE UNE MATRICE AVEC LE NIVEAU ET LE POURCENTAGE
+  }
+
+  public int CalculerEtatGeneral(int mois, Parcelle parcelle) //Calculer l'état de la plante selon la météo du mois et la parcelle où elle est plantée
   /*
   Renvoie un entier : 
   3 => en très bonne santé
@@ -116,41 +165,26 @@ public abstract class Plante
     }
 
     //ETAT EN FONCTION DE L'HUILE : doit être à ±10% pour très bien, ±20% pour bien, sinon mauvais
-    int etatHuile = 1;
-    //si on est à ±20% du niveau d'huile requis
-    if (NiveauHuile > DonneesPlantes.PlantesRessources[TypePlante]["huile"] - (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauHuile < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-    {
-      //si on est dans les 10% 
-      if (NiveauHuile > DonneesPlantes.PlantesRessources[TypePlante]["huile"] - (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauHuile < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-        etatHuile = 3;
-      else etatHuile = 2;
-    }
+    int etatHuile = VerifierEtatSpecifique("huile")[0];
 
     //Etat en fonction de l'ELECTRISATION
-    int etatElectrisation = 1;
-    //si on est à ±20% du niveau d'électricite requis
-    if (NiveauElectricite > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauElectricite < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-    {
-      //si on est dans les 10% 
-      if (NiveauElectricite > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauElectricite < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.1 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-        etatElectrisation = 3;
-      else etatElectrisation = 2;
-    }
+    int etatElectrisation = VerifierEtatSpecifique("electricite")[0];
 
     //Etat en fonction du niveau UV
-    int etatUV = 1;
-    //si on est à ±50% du niveau d'UV requis
-    if (NiveauUV > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.5 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauUV < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.5 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-    {
-      //si on est dans les 20% 
-      if (NiveauUV > DonneesPlantes.PlantesRessources[TypePlante]["electricite"] - (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]) && NiveauUV < DonneesPlantes.PlantesRessources[TypePlante]["huile"] + (0.2 * DonneesPlantes.PlantesRessources[TypePlante]["huile"]))
-        etatUV = 3;
-      else etatUV = 2;
-    }
+    int etatUV = VerifierEtatSpecifique("UV")[0]; //récupère seulement le niveau. 
 
     int etatGeneral = Convert.ToInt16((3 + ((0.5 * fragilite + 0.5) * ((etatHuile + etatElectrisation + etatUV) / 3))) / (1 + (0.5 * fragilite + 0.5)));
 
     return etatGeneral;
+  }
+
+  public void ArroserPlante() //ARROSER PLANTE
+  {
+    int[] etatHuile = VerifierEtatSpecifique("huile");
+    Console.WriteLine($"Etat de la plante avant arrosage : niveau d'huile à {etatHuile[1]}% de sa valeur idéale, ce qui correspond à une note de {etatHuile[0]} sur 3.");
+
+
+
   }
 
 
