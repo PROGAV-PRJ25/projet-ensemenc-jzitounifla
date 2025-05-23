@@ -113,7 +113,7 @@ public class Parcelle
                     //recolte
                     if (MatricePlantes[i, j] is ArbreFruit arbreFruit)
                     {
-                        // Tu peux maintenant utiliser `arbre` comme un objet ArbreFruit
+                        // on utilise arbrefruit comme un objet
                         arbreFruit.ProductionTour += 1;
                         if (arbreFruit.ProductionTour == arbreFruit.FrequenceProduction)
                         {
@@ -121,7 +121,16 @@ public class Parcelle
                             arbreFruit.ProductionTour = 0;
                         }
                     }
-                    MatricePlantes[i, j].CalculerEtatGeneral(mois, this);
+                    if (MatricePlantes[i, j] is Fleur fleur)
+                    {
+                        if (fleur.Etat > 1)
+                        {
+                            fleur.NombreFleur = fleur.Etat; //si elle est en suffisemment bon état elle produit des fleurs. 
+                        }
+                        else fleur.NombreFleur = 0; //sinon, rien. 
+
+                        monde.FleursProduites[fleur.TypeFleur] += fleur.NombreFleur; //on ajoute ces fleurs à la récolte. 
+                    }
                     //si la plante est morte
                     if (MatricePlantes[i, j].Etat == 0)
                     {

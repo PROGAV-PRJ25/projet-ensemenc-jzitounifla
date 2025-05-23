@@ -35,7 +35,9 @@ public class Monde
     public string Information { get; set; }
     public string ButAmelioration { get; set; }
     public bool Passer { get; set; }//variable pour passer un tour
+    public Dictionary<string, int> FleursProduites { get; set; }
     public Dictionary<string, int> FruitsProduits { get; set; }
+    public int NbAntivirus { get; set; }
     Random Rnd = new Random();
     public Fee FeeMonde;
     public Monde(int dimX, int dimY, int coefficientPieceDepart = 5) //CONSTRUCTEUR MONDE
@@ -63,6 +65,7 @@ public class Monde
         Message = "";
         Information = "";
         ButAmelioration = "Economise de l'huile lors de l'arrosage";
+        NbAntivirus = 0;
 
         //initialisation des composants et fruits
         Composants = new Dictionary<string, int>
@@ -72,10 +75,13 @@ public class Monde
             {"tige", 10*coefficientPieceDepart},
             {"vis", 10*coefficientPieceDepart}
         };
-        FruitsProduits = new Dictionary<string, int>
+        FleursProduites = new Dictionary<string, int>
         {
             { "graines lumineuses", 0 },     // Marguerite
             { "pétales d'acier", 0 },        // Robose
+        };
+        FruitsProduits = new Dictionary<string, int>
+        {
             { "gousses grimpantes", 0 },     // Lierre
             { "pomwies", 0 },                // PoMWier
             { "poires hybrides", 0 }         // Poirier
@@ -83,10 +89,13 @@ public class Monde
 
         //ecran affichage : hauteur sans les informations du haut et du bas
         Graphique.YConsole = dimY * Graphique.YTailleCase + Graphique.YGrilleStart + 10;
-        FruitsProduits = new Dictionary<string, int>
+        FleursProduites = new Dictionary<string, int>
         {
             { "graines lumineuses", 0 },     // Marguerite
             { "pétales d'acier", 0 },        // Robose
+        };
+        FruitsProduits = new Dictionary<string, int>
+        {
             { "gousses grimpantes", 0 },     // Lierre
             { "pomwies", 0 },                // PoMWier
             { "poires hybrides", 0 }         // Poirier
@@ -159,7 +168,12 @@ public class Monde
             }
 
         }
-        else if (MenuSelectionnee == "Acheter")
+        else if (SectionSelectionnee == "Soigner")
+        {
+            //Si on peut soigner la plante
+            SelectionCase();
+        }
+        else if (MenuSelectionnee == "Acheter des composants")
         {
             //si on peut acheter les composants
             if (Composants["boulons"] >= Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee])
@@ -167,6 +181,10 @@ public class Monde
                 Acheter();
                 TourModeUrgence();
             }
+        }
+        else if (MenuSelectionnee == "Echanger des fleurs contre des anti-virus")
+        {
+            AcheterAntivirus();
         }
         else if (SectionSelectionnee == "Demonter")
         {
@@ -188,7 +206,7 @@ public class Monde
         {
             TourModeUrgence();
         }
-        else if (SectionSelectionnee == "VendreRecolte")
+        else if (SectionSelectionnee == "Vendre sa récolte de fruits")
         {
             VendreRecolte();
             TourModeUrgence();
@@ -310,6 +328,14 @@ public class Monde
                         {
                             PayerConstruction(Constantes.PiegeNecessaireConstruction[SectionSelectionnee]);
                             ModeUrgenceFin();//Creature piege, fin du mode urgence
+                        }
+                        else if (SectionSelectionnee == "Soigner")
+                        {
+                            if (ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].PreparerGuerirPlante(NbAntivirus)) //Si on a assez d'antivirus pour guerir la plante
+                            {
+                                NbAntivirus -= ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].GuerirPlante(); //on guerit la plante et on soustrait le nombre d'antivirus. 
+                            }
+                            else valider = false; //sinon on met valider false
                         }
 
                     }
@@ -458,6 +484,9 @@ public class Monde
         Console.ForegroundColor = Graphique.Palette["Composants"];
         Graphique.AfficherDictionnaire(Composants, Graphique.Palette["Composants"]);
         Console.WriteLine("");
+        //fleurs
+        Console.ForegroundColor = Graphique.Palette["Fleur"];
+        Graphique.AfficherDictionnaire(FleursProduites, Graphique.Palette["Fleur"]);
         //fruits
         Console.ForegroundColor = Graphique.Palette["Fruit"];
         Graphique.AfficherDictionnaire(FruitsProduits, Graphique.Palette["Fruit"]);
@@ -616,12 +645,18 @@ public class Monde
             else
                 Console.Write("   Niveau maximum");
         }
-        else if (MenuSelectionnee == "Acheter" && SectionSelectionnee != "Retour au menu principal")
+        else if (MenuSelectionnee == "Acheter des composants" && SectionSelectionnee != "Retour au menu principal")
         {
             //affiche prix du composant
             int prix = Constantes.PackAchat * Constantes.CoutBoulons[SectionSelectionnee];
-            Console.WriteLine("Prix en boulons pour un pack de " + Constantes.PackAchat);
+            Console.WriteLine("\t\tVOUS VOULEZ ACHETER CE PRODUIT : " + SectionSelectionnee + "\nPrix en boulons pour un pack de " + Constantes.PackAchat);
             Console.WriteLine(prix);
+        }
+        else if (MenuSelectionnee == "Echanger des fleurs contre des anti-virus" && SectionSelectionnee != "Retour au menu principal")
+        {
+            //affiche prix du composant
+            int gain = Constantes.FleurGain[SectionSelectionnee] * FleursProduites[SectionSelectionnee];
+            Console.WriteLine("\t\tVOICI LE NOMBRE D'ANTIVIRUS QUE VOUS POUVEZ OBTENIR EN ECHANGANT CETTE FLEUR : " + SectionSelectionnee + "\nNombre d'antivirus " + gain);
         }
         else if (MenuSelectionnee == "Pieges" && SectionSelectionnee != "Retour au menu principal")
         {
@@ -674,7 +709,7 @@ public class Monde
                             int dy = Math.Abs(planteExistante.Coord[1] - y);
 
                             // Espacement minimum entre la plante existante et la nouvelle
-                            int espacementMin = Math.Max(planteExistante.EspacementNecessaire, ArbreFruitRegistry.Infos[SectionSelectionnee].EspacementNecessaire);
+                            int espacementMin = Math.Max(planteExistante.EspacementNecessaire, Convert.ToInt16(DonneesPlantes.PlantesRessources[SectionSelectionnee]["Espace"]));
 
                             // Si la case est trop proche d'une plante existante, interdit de planter ici
                             if (dx <= espacementMin && dy <= espacementMin)
@@ -860,19 +895,25 @@ public class Monde
     }
     public void VendreRecolte()//VENDRE SA RECOLTE POUR DES BOULONS
     {
-        {
-            int totalArgent = 0;
-            foreach (var fruit in FruitsProduits.Keys.ToList())
-            {
-                int quantite = FruitsProduits[fruit];
-                int gainUnitaire = Constantes.FruitsGain.ContainsKey(fruit) ? Constantes.FruitsGain[fruit] : 0;
 
-                totalArgent += quantite * gainUnitaire;
-                // Réinitialiser le stock à 0
-                FruitsProduits[fruit] = 0;
-            }
-            Composants["boulons"] += totalArgent;
+        int totalArgent = 0;
+        foreach (var fruit in FruitsProduits.Keys.ToList())
+        {
+            int quantite = FruitsProduits[fruit];
+            int gainUnitaire = Constantes.FruitsGain.ContainsKey(fruit) ? Constantes.FruitsGain[fruit] : 0;
+
+            totalArgent += quantite * gainUnitaire;
+            // Réinitialiser le stock à 0
+            FruitsProduits[fruit] = 0;
         }
+        Composants["boulons"] += totalArgent;
+
+    }
+
+    public void AcheterAntivirus() //echanger des fleurs contre des antivirus
+    {
+        NbAntivirus += Constantes.FleurGain[SectionSelectionnee] * FleursProduites[SectionSelectionnee];
+        FleursProduites[SectionSelectionnee] = 0;
     }
 
     //piege

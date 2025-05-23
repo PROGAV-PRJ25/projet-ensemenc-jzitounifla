@@ -8,18 +8,20 @@ public static class Constantes
     { "MenuGeneral", new Dictionary<int, string> {
         { 6, "Planter" },
         { 8, "Arroser" },
-        { 10, "Demonter" },
-        { 12, "Ameliorer" },
-        { 14, "Marché" },
+        { 10, "Soigner"},
+        { 12, "Demonter" },
+        { 14, "Ameliorer" },
+        { 16, "Marché" },
         { 25, "Passer au mois suivant"},
     }},
     { "MenuUrgence", new Dictionary<int, string> {
         { 6, "Planter" },
         { 8, "Arroser" },
-        { 10, "Demonter" },
-        { 12, "Ameliorer" },
-        { 14, "Marché" },
-        { 16, "Pieges" },
+        { 10, "Soigner"},
+        { 12, "Demonter" },
+        { 14, "Ameliorer" },
+        { 16, "Marché" },
+        { 18, "Pieges" },
         { 25, "PasserAction"},
     }},
       { "Pieges", new Dictionary<int, string> {
@@ -42,14 +44,20 @@ public static class Constantes
           {18, "Retour au menu principal"}
     }},
         { "Marché", new Dictionary<int, string> {
-          { 6, "Acheter" },
-          { 8, "VendreRecolte" },
+          { 6, "Acheter des composants" },
+          { 8, "Echanger des fleurs contre des anti-virus"},
+          { 10, "Vendre sa récolte de fruits" },
           {18, "Retour au menu principal"}
     }},
-       { "Acheter", new Dictionary<int, string> {
+       { "Acheter des composants", new Dictionary<int, string> {
           { 6, "plaque" },
           { 8, "tige" },
           { 10, "vis" },
+          { 18, "Retour au menu principal"}
+    }},
+    {"Echanger des fleurs contre des anti-virus", new Dictionary<int, string> {
+          { 6, "graines lumineuses"},
+          { 8, "pétales d'acier" },
           { 18, "Retour au menu principal"}
     }},
      { "Planter", new Dictionary<int, string> {
@@ -208,12 +216,18 @@ public static class Constantes
   //valeur de chaque fruit au marche en boulons
   public static readonly Dictionary<string, int> FruitsGain = new Dictionary<string, int>
         {
-            { "graines lumineuses", 10 },     // Marguerite
-            { "pétales d'acier", 10 },        // Robose
+
             { "gousses grimpantes", 2 },     // Lierre
             { "pomwies", 4 },                // PoMWier
             { "poires hybrides", 4 }         // Poirier
         };
+
+  //nbre de remède acheté pour chaque fleur vendue 
+  public static readonly Dictionary<string, int> FleurGain = new Dictionary<string, int>
+  {
+    { "graines lumineuses", 1 },     // Marguerite
+    { "pétales d'acier", 3 },        // Robose
+  };
   //cout de chaque ressource en boulons
   public static readonly Dictionary<string, int> CoutBoulons = new Dictionary<string, int>
         {
@@ -233,6 +247,8 @@ public static class Constantes
   public const double ProbaModeUrgence = 0.2;
 
   public const double ProbaPlanteVirus = 0.05;
+  public const int CoutAntivirus = 2; //facteur par lequel on multiplie le virus pour savoir le nombre d'antivirus dont la plante a besoin pour se soigner. 
+
 
   //temps de deplacement de la creature en mode urgence
   public const int TempsDpt = 300;

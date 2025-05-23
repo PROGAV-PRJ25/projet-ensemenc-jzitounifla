@@ -17,6 +17,7 @@ public static class Graphique
             { "Mois",ConsoleColor.Blue },
             { "Information",ConsoleColor.Green  },
             { "Robots",ConsoleColor.Cyan },
+            { "Fleur", ConsoleColor.White},
             { "Fruit",ConsoleColor.White  },
             { "CurseurNon",ConsoleColor.Red  },
             { "CurseurOui",ConsoleColor.Green  },

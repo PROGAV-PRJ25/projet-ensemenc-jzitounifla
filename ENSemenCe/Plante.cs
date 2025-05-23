@@ -66,7 +66,7 @@ public abstract class Plante
 
   public int AffichageTour { get; set; } //combien de case afficher
   public int Etat { get; set; }//sante de la plante
-  public bool Virus { get; set; }
+  public int Virus { get; set; }
   Random random = new Random();
 
 
@@ -74,7 +74,7 @@ public abstract class Plante
   //CONSTRUCTEUR
   public Plante(Parcelle parcelle, int x, int y) //les trucs non gérés ici sont gérés individuellement dans la sous-classe (on a besoin d'autres infos)
   {
-    Virus = false;
+    Virus = 0;
     Parcelle = parcelle;
     Coord = [x, y];
     AffichageTour = 1;
@@ -113,9 +113,11 @@ public abstract class Plante
     //Decider si la plante a un virus ce mois-ci
     if (Constantes.ProbaPlanteVirus < random.NextDouble())
     { //si la plante est tiree au sort...
-      Virus = true;
+      Virus = random.Next(1, 4);
       Console.WriteLine("ATTENTION !! Votre plante " + TypePlante + " est porteuse d'un virus !! Guerissez-la vite car cela diminue de moitié son état...");
     }
+
+    //Actualiser l'état de la plante
     Etat = CalculerEtatGeneral(mois, parcelle);
   }
 
@@ -184,12 +186,54 @@ public abstract class Plante
     double resultat = (3 + poidsFragilite * moyenne) / (1 + poidsFragilite);
 
 
-    if (Virus) { resultat /= 2; } //Si la plante est malade elle est en moitié bon état
+    if (Virus != 0) { resultat /= 2; } //Si la plante est malade elle est en moitié bon état
 
 
     int etatGeneral = (int)Math.Round(resultat);
     // Forcer le résultat à être entre 0 et 3
     return Math.Max(0, Math.Min(3, etatGeneral));
+  }
+
+  public bool PreparerGuerirPlante(int nbAntivirus)
+  {
+    bool actionPossible = false;
+    if (Virus == 0)
+    {
+      Console.WriteLine("Cette plante n'est pas malade. Action annulée.");
+    }
+    else
+    {
+      Console.WriteLine("Cette plante a été attaquée par un virus !! Dépéchez-vous de la soigner...");
+      int cout = Virus * Constantes.CoutAntivirus;
+      Console.WriteLine("Pour la soigner, vous aurez besoin de " + cout + " antivirus. Vous en avez actuellement " + nbAntivirus + ".");
+
+      if (nbAntivirus < cout)
+      { Console.WriteLine("Vous n'avez pas assez d'antivirus... Votre plante reste malade. Action annulée."); }
+      else
+      {
+        Console.WriteLine("Vous pouvez soigner cette plante !! Pressez Entrée pour confirmer l'action, ou E pour l'annuler.");
+        ConsoleKeyInfo touche = Console.ReadKey(true);
+        while ((touche.Key != ConsoleKey.Enter) || (touche.Key != ConsoleKey.E)) //s'assurer qu'ils pressent pas la mauvaise touche
+        {
+          Console.WriteLine("Erreur : mauvaise touche. Veuillez presser entrée pour valider, E pour annuler.");
+          touche = Console.ReadKey(true);
+
+        }
+        if (touche.Key == ConsoleKey.Enter)
+        {
+          actionPossible = true;
+        }
+
+      }
+    }
+    return actionPossible;
+  }
+
+  public int GuerirPlante()
+  {
+    int cout = Virus * Constantes.CoutAntivirus; //on recalcule le cout pour pouvoir le renvoyer après 
+    Virus = 0;
+    return cout;
   }
 
   public int PreparerArrosagePlante() //CHOISIR NOMBRE DE LITRES À METTRE À PLANTE -> que pour arrosage spécifique d'une plante. 
