@@ -182,6 +182,7 @@ public class Monde
         else if (SectionSelectionnee == "Soigner")
         {
             //Si on peut soigner la plante
+            Console.WriteLine("là ça fait un truc");
             SelectionCase();
         }
         else if (MenuSelectionnee == "Acheter des composants")
@@ -321,6 +322,7 @@ public class Monde
                 //valider
                 case ConsoleKey.Enter:
                     if (CaseSelectionneePossible)
+
                     {
                         valider = true;
                         if (MenuSelectionnee == "Planter")
@@ -342,11 +344,16 @@ public class Monde
                         }
                         else if (SectionSelectionnee == "Soigner")
                         {
-                            if (ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].PreparerGuerirPlante(NbAntivirus)) //Si on a assez d'antivirus pour guerir la plante
+                            bool SoignerPossible = ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].PreparerGuerirPlante(NbAntivirus);
+                            if (SoignerPossible) //Si on a assez d'antivirus pour guerir la plante
                             {
                                 NbAntivirus -= ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]].GuerirPlante(); //on guerit la plante et on soustrait le nombre d'antivirus. 
                             }
-                            else valider = false; //sinon on met valider false
+                            else
+                            {
+                                Console.WriteLine("Action impossible à réaliser.");
+                                valider = false;
+                            } //sinon on met valider false
                         }
 
                     }
@@ -987,7 +994,7 @@ public class Monde
             }
             else
             {
-                Composants["boulons"] = -litresSouhaites * Constantes.CoutBoulons["litreHuile"];
+                Composants["boulons"] -= litresSouhaites * Constantes.CoutBoulons["litreHuile"];
                 plante.ArroserPlante(litresSouhaites, mois, ListParcelle[ParcelleSlectionnee]);
                 return true;
             }
@@ -1005,7 +1012,7 @@ public class Monde
         {  //si on a assez de boulons pour tout arroser 
             Console.WriteLine("Cette action vous coûtera " + coutArroserTout + " boulons. Voulez-vous la réaliser ? Entrée pour valider, E pour annuler"); //vérifier que la personne veut bien arroser avec le prix
             ConsoleKeyInfo touche = Console.ReadKey(true);
-            while ((touche.Key != ConsoleKey.Enter) || (touche.Key != ConsoleKey.E)) //s'assurer qu'ils pressent pas la mauvaise touche
+            while ((touche.Key != ConsoleKey.Enter) && (touche.Key != ConsoleKey.E)) //s'assurer qu'ils pressent pas la mauvaise touche
             {
                 Console.WriteLine("Erreur : mauvaise touche. Veuillez presser entrée pour valider, E pour annuler.");
                 touche = Console.ReadKey(true);
@@ -1031,7 +1038,7 @@ public class Monde
         {
             Console.WriteLine("Cette action vous coûtera " + coutArroser + " boulons. Voulez-vous la réaliser ? Entrée pour valider, E pour annuler"); //vérifier que la personne veut bien arroser avec le prix
             ConsoleKeyInfo touche = Console.ReadKey(true);
-            while ((touche.Key != ConsoleKey.Enter) || (touche.Key != ConsoleKey.E)) //s'assurer qu'ils pressent pas la mauvaise touche
+            while ((touche.Key != ConsoleKey.Enter) && (touche.Key != ConsoleKey.E)) //s'assurer qu'ils pressent pas la mauvaise touche
             {
                 Console.WriteLine("Erreur : mauvaise touche. Veuillez presser entrée pour valider, E pour annuler.");
                 touche = Console.ReadKey(true);

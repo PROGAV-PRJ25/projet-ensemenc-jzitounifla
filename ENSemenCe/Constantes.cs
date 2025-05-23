@@ -245,7 +245,7 @@ public static class Constantes
 
   //URGENCE
   public const double ProbaModeUrgence = 0.2;
-  public const double ProbaPlanteVirus = 0.05;
+  public const double ProbaPlanteVirus = 1;
   public const int CoutAntivirus = 2; //facteur par lequel on multiplie le virus pour savoir le nombre d'antivirus dont la plante a besoin pour se soigner. 
   public const int DelaiAvantModeUrgence = 4;
 

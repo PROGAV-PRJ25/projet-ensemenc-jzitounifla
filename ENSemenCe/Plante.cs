@@ -233,6 +233,8 @@ public abstract class Plante
   {
     int cout = Virus * Constantes.CoutAntivirus; //on recalcule le cout pour pouvoir le renvoyer après 
     Virus = 0;
+    Etat = 3;
+    Console.WriteLine("La plante est débarrassée de ce vilain virus !!");
     return cout;
   }
 
