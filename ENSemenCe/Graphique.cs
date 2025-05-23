@@ -300,7 +300,7 @@ public static class Graphique
         Console.WriteLine("- N'hésitez pas à économiser votre butin !! Quelque fois surgit un individu étrange dont le cœur semble battre, et qui vient piller votre ferraille si précieuse. Vous aurez besion d'un piège pour l'attraper, et pour en acheter un vous aurez besoin de suffisemment de boulons ! ");
         Console.WriteLine("- De même, il arrive que vos bébés robotiques soit attaqués par un virus qui leur fait vriller les circuits. Allez donc acheter un antivirus au supermaché.");
 
-        System.Threading.Thread.Sleep(5000);
+        System.Threading.Thread.Sleep(3000);
 
         Console.WriteLine("\n\nPRESSEZ ENTREE POUR COMMENCER LE JEU");
         touche = Console.ReadKey();

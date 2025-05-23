@@ -111,9 +111,9 @@ public abstract class Plante
     AffichageTour += 1;
 
     //Decider si la plante a un virus ce mois-ci
-    if (Constantes.ProbaPlanteVirus < random.NextDouble())
+    if (Constantes.ProbaPlanteVirus > random.NextDouble())
     { //si la plante est tiree au sort...
-      Virus = random.Next(1, 4);
+      Virus = random.Next(1, 4); //elle est inféctée par un virus au niveau aléatoire entre 1 et 4
       Console.WriteLine("ATTENTION !! Votre plante " + TypePlante + " est porteuse d'un virus !! Guerissez-la vite car cela diminue de moitié son état...");
     }
 
@@ -200,6 +200,7 @@ public abstract class Plante
     if (Virus == 0)
     {
       Console.WriteLine("Cette plante n'est pas malade. Action annulée.");
+      System.Threading.Thread.Sleep(2000);
     }
     else
     {
