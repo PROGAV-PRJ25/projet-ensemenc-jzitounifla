@@ -53,7 +53,7 @@ public class Monde
         MenuSelectionnee = "MenuGeneral";
         SectionSelectionnee = "Planter";
         TypePlanteSelectionne = Constantes.Menus["Planter"].Values.First();
-
+        Origin = "MenuGeneral";
         //parcelle et mois de depart
         ListParcelle = [new Parcelle(XTailleGrille, YTailleGrille, "Potager")];
         ParcelleSlectionnee = 0;
