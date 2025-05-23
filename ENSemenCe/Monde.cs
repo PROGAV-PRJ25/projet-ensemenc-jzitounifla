@@ -120,7 +120,7 @@ public class Monde
 
 
     //Fonctions pour le déroulement des tours
-    public void Jouer() //LA BOUCLE GÉNÉRALE DE JEU !! LÀ QU'A LIEU LE TOUR
+    public void Simuler() //LA BOUCLE GÉNÉRALE DE JEU !! LÀ QU'A LIEU LE TOUR
     {
         Passer = false;
         Mois = -1;
