@@ -135,9 +135,17 @@ public class CreatureNiveau4 : Creature
 //fee
 public class Fee : Creature
 {
-    public int Bonus { get; set; }
-    public Fee(Monde monde, string nom, int bonus)
-        : base(monde, nom, 1, 2, 5, Graphique.FeeDesign)
+    public int BonusComposant { get; set; }
+    public Fee(Monde monde, int bonusComposant)
+        : base(monde, "Fee", 1, 2, 5, Graphique.FeeDesign)
     {
+        BonusComposant = bonusComposant;
+    }
+    public void Action()//ACTION DE LA FEE ARRIVE SUR UN BORD, DONNES DES COMPOSANTS ET REPARTS
+    {
+        PositionnerSurBord();
+        MondeCreature.AjouterNComposantDeChaqueType(BonusComposant);
+        MondeCreature.Affichage();
+        Thread.Sleep(Constantes.TempsFee);
     }
 }

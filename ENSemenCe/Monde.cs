@@ -29,6 +29,7 @@ public class Monde
     public Creature CreatureMonde { get; set; }
     public string Origin { get; set; }//menu de retour : change selon le mode (menuGeneral ou menuUrgence)
     public bool Urgence { get; set; }
+    public int DelaiAvantModeUrgence { get; set; }
 
     //autre
     public string Message { get; set; }
@@ -39,7 +40,9 @@ public class Monde
     public Dictionary<string, int> FruitsProduits { get; set; }
     public int NbAntivirus { get; set; }
     Random Rnd = new Random();
+    //fee
     public Fee FeeMonde;
+    public int DelaiAvantFee;
     public Monde(int dimX, int dimY, int coefficientPieceDepart = 5) //CONSTRUCTEUR MONDE
     {
         //taille de la grille
@@ -59,8 +62,10 @@ public class Monde
 
         //creature
         CreatureMonde = null;
+        DelaiAvantModeUrgence = Constantes.DelaiAvantModeUrgence;
         //fee
         FeeMonde = null;
+        DelaiAvantFee = Constantes.DelaiAvantFee;
         //label
         Message = "";
         Information = "";
@@ -119,13 +124,18 @@ public class Monde
     {
         Passer = false;
         Mois = -1;
+        int moisPasse = 0;
         //boucle de jeu pour defilement d un mois
         while (true)
         {
             Passer = false;
             Mois = (Mois + 1) % DonneesClimatiques.TousLesMois.Count();
-            //FeeUrgenceTirage();
-            ModeUrgenceTirage();
+            //Tirage de la fee, puis action
+            if (moisPasse > DelaiAvantFee)
+                FeeTirage();
+            //Empeche le mode urgence durant les premiers mois
+            if (moisPasse > DelaiAvantModeUrgence)
+                ModeUrgenceTirage();
             //boucle pour un mois
             while ((!Passer) || Urgence)
             {
@@ -133,6 +143,7 @@ public class Monde
                 GererEntreeClavier();
             }
             PasserTour();
+            moisPasse += 1;
         }
     }
     public void PasserTour() //PASSER LE TOUR : ACTUALISE CHAQUE PLANTE DE CHAQUE PARCELLE
@@ -224,7 +235,7 @@ public class Monde
         }
         else if (SectionSelectionnee == "ArrosageAutomatique")
         {
-
+            ArroserParcelleSelectionnee();
         }
         else
         {
@@ -363,7 +374,7 @@ public class Monde
             else
                 CaseSelectionneePossible = true;
         }
-        else if (SectionSelectionnee == "Demonter" || SectionSelectionnee == "ArroserUnePlante")
+        else if (SectionSelectionnee == "Demonter" || SectionSelectionnee == "ArroserUnePlante" || SectionSelectionnee == "Soigner")
         {
             //si le curseur est sur une plante
             if (ListParcelle[ParcelleSlectionnee].MatricePlantes[CaseSelectionnee[0], CaseSelectionnee[1]] != null)
@@ -461,6 +472,26 @@ public class Monde
             }
         }
     }
+
+    //Fee
+    public void FeeTirage()// FAIT APPARAITRE UNE FEE AVEC UNE PROBABILITE, EXECUTE SON ACTION ET LA SUPPRIME
+    {
+        double proba = Rnd.NextDouble(); // nombre entre 0.0 et 1.0
+        if (proba <= Constantes.ProbaFee)
+        {
+            FeeMonde = new Fee(this, Constantes.FeeBonus);
+            FeeMonde.Action();
+            FeeMonde = null;
+        }
+    }
+    public void AjouterNComposantDeChaqueType(int n)//AJOUTE N COMPOSANTS DE CHAQUE TYPE, FONCTION APPELE DURANT L ACTION DE LA FEE
+    {
+        foreach (var cle in Composants.Keys)
+        {
+            Composants[cle] += n;
+        }
+    }
+
     //Affichage
     public void Affichage()//AFFICHE TOUT LE JEU
     {
@@ -498,8 +529,16 @@ public class Monde
             Console.ForegroundColor = Graphique.Palette["Creature"];
             Console.WriteLine("\n Mode URGENCE, creature niveau " + CreatureMonde.Niveau + ",  action restante " + CreatureMonde.NombreActions);
         }
+        else if (FeeMonde != null)
+        {
+            Console.ForegroundColor = Graphique.Palette["Fee"];
+            Console.WriteLine("\n Une fee vous donne " + FeeMonde.BonusComposant + " composants de chaque type");
+        }
         else
+        {
+
             Graphique.SauterNLigne(2);
+        }
     }
     public void AffichageGrille(int xTailleGrilleCaractere, int yTailleGrilleCaractere)//AFFICHE LA PARTIE PRINCIPAL DU JEU
     {
@@ -549,6 +588,12 @@ public class Monde
                             if (CaseSelectionneePossible)
                                 couleur = Graphique.Palette["CurseurOui"];
                             Graphique.TracerPatternLongueurN("█", Graphique.XTailleCase, couleur);
+                        }
+                        //fee
+                        else if (FeeMonde != null && FeeMonde.X == xGrille && FeeMonde.Y == yGrille)
+                        {
+                            Console.ForegroundColor = Graphique.Palette["Fee"];
+                            Console.Write(FeeMonde.Design[yCase]);
                         }
                         //creature
                         else if (CreatureMonde != null && CreatureMonde.X == xGrille && CreatureMonde.Y == yGrille)
@@ -739,7 +784,6 @@ public class Monde
                 return false;
             }
         }
-
         return true;
     }
     public void Planter(string type, bool initilisation = false) //PLANTER UNE NOUVELLE PLANTE SUR LA PARCELLE

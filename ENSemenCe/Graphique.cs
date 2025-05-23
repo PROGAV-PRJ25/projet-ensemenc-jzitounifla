@@ -25,6 +25,7 @@ public static class Graphique
             { "EtatPlante1",ConsoleColor.Red  },
             { "EtatPlante2",ConsoleColor.Yellow  },
             { "EtatPlante3",ConsoleColor.Green  },
+            { "Fee",ConsoleColor.Magenta },
     };
 
     //EQUIPEMENTS PARCELLE
